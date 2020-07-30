@@ -8,6 +8,6 @@ public class Weapon extends Card {
   
     @Override
     public String cardDescription(){
-      return "This weapon is a "+weaponName+".\n";
+      return weaponName;
     }
 }
