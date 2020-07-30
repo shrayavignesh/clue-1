@@ -2,15 +2,18 @@ import java.util.ArrayList;
 import java.util.Queue;
 
 public class Clue {
+    
+    // Fields
+    
+    final ArrayList<Weapon> weapons;
+    final ArrayList<Room> rooms;
+    final ArrayList<ClueCharacter> characters;
+    final Suggestion suggestion;
+    ArrayList<Player> players;
+    Queue<Player> playOrder;
+    Card[][] board = new Card[24][25];
+    
     public static void main(String[] a) {
-        final ArrayList<Weapon> weapons;
-        final ArrayList<Room> rooms;
-        final ArrayList<ClueCharacter> characters;
-        final Suggestion suggestion;
-        ArrayList<Player> players;
-        Queue<Player> playOrder;
-        Card[][] board = new Card[24][25];
-
         /**
          * TODO - Main Clue event loop
          * 1. Create Circumstance to be used as solution <character, weapon, room>
@@ -29,5 +32,19 @@ public class Clue {
          *
          *  That loop continues until all the players are gone or someone guesses correctly
          */
+         try {
+         BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
+         System.out.println("How many players?");
+         String playerNum = br.readLine();
+         int playerCount = Integer.parseInt(playerNum);
+         setupGame(playerCount);
+         }catch (IOException e) {}
     }
+	
+	/**
+	 * Sets up the game
+	 */
+	 public static void setupGame(int playerCount){
+		 System.out.println(playerCount);
+	 }
 }
