@@ -37,6 +37,10 @@ public class Room extends Card {
         this.otherWeapon = otherWeapon;
     }
     
+    public void setEntrance() {
+    	entrance = true;
+    }
+    
     @Override
     public String cardDescription(){
         if(weapon == null){
