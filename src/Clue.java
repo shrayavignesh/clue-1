@@ -1,14 +1,12 @@
-package Cluedo;
-
 import java.util.ArrayList;
 import java.util.Queue;
 
 public class Clue {
     private String[] weapon_Names = {"Candlestick", "Dagger", "Lead Pipe", "Revolver", "Rope", "Spanner"};
     private String[] room_Names = {"Lounge", "Dining Room", "Kitchen", "Ballroom", "Conservatory",
-    "Billiard Room", "Library", "Study Room", "Hall"};
-    private String[] character_Names = {"Miss Scarlett","Colonel Mustard","Mrs White","Mr Green",
-    "Mrs Peacock","Professor Plum"};
+            "Billiard Room", "Library", "Study Room", "Hall"};
+    private String[] character_Names = {"Miss Scarlett", "Colonel Mustard", "Mrs White", "Mr Green",
+            "Mrs Peacock", "Professor Plum"};
 
     private ArrayList<Weapon> weapons;
     private ArrayList<Room> rooms;
@@ -18,21 +16,21 @@ public class Clue {
     Queue<Player> playOrder;
     Card[][] board = new Card[24][25];
 
-    public Clue(){
+    public Clue() {
         loadGame();
     }
 
-    public void loadGame(){
-        for(String weapon : weapon_Names) weapons.add(new Weapon(weapon));
-        for(String room : room_Names) rooms.add(new Room(room));
-        for(String character : character_Names) characters.add(new ClueCharacter(character));
+    public void loadGame() {
+        for (String weapon : weapon_Names) weapons.add(new Weapon(weapon));
+        for (String room : room_Names) rooms.add(new Room(room));
+        for (String character : character_Names) characters.add(new ClueCharacter(character));
     }
 
     public static void main(String[] a) {
 
 
         /**
-         * TODO - Main Cluedo.Clue event loop
+         * TODO - Main Clue event loop
          * 1. Create Circumstance to be used as solution <character, weapon, room>
          * 2. Ask how many players (and their names?)
          * 3. Share out the remaining Cards
