@@ -1,3 +1,5 @@
+package Cluedo;
+
 public class ClueCharacter extends Card {
     protected Player player;
 
