@@ -1,3 +1,5 @@
+package Cluedo;
+
 abstract class Card {
     protected String name;
 
