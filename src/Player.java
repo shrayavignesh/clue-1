@@ -24,12 +24,12 @@ public class Player {
         //If a free cell, move the person from 1 position to another in array
         //
     }
-
+  
     public void Suggestion() {
 
     }
 
     public void Accusation() {
-
+      
     }
 }
