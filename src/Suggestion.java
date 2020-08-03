@@ -1,13 +1,13 @@
 import java.util.ArrayList;
 
 public class Suggestion {
-    // Current Cluedo.Player
+    // Current Player
     final Weapon weapon;
     final ClueCharacter character;
     final Room room;
     final Player player;
 
-    //Neighbouring Cluedo.Player
+    //Neighbouring Player
     private Player player_with_Card;
     private ArrayList<Card> presentCards;
 

@@ -8,4 +8,9 @@ public class ClueCharacter extends Card {
     public void addPlayer(Player p) {
         player = p;
     }
+
+    @Override
+    String getDescription() {
+        return "Hi. I am " + name + ".";
+    }
 }
