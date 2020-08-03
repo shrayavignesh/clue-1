@@ -1,3 +1,7 @@
+package Cluedo;
+
+import Cluedo.Card;
+
 public class Weapon extends Card {
   
     private String weaponName;

@@ -3,10 +3,9 @@ public class Room extends Card {
     ClueCharacter other = null;
     Weapon weapon;
     Weapon otherWeapon;
-    String roomName;
     
     public Room(String roomName){
-        this.roomName = roomName;
+        this.name = roomName;
     }
     
     /**
@@ -42,12 +41,12 @@ public class Room extends Card {
     }
     
     @Override
-    public String cardDescription(){
-        if(weapon == null){
-            return "You've entered the "+roomName+" room, there's nothing in here.\n";
+    public String cardDescription() {
+        if(weapon == null) {
+            return "You've entered the " + roomName + " room, there's nothing in here.\n";
         }
         else{
-            return "You've entered the "+roomName+" room, you see a "+weapon.cardDescription()+".\n";
+            return "You've entered the " + roomName + " room, you see a " + weapon.cardDescription() + ".\n";
         }
     }
 }

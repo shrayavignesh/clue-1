@@ -1,5 +1,9 @@
-public abstract class Card {
-  
-    public abstract String cardDescription();
+package Cluedo;
 
+abstract class Card {
+    protected String name;
+
+    private String getName() {
+        return name;
+    }
 }
