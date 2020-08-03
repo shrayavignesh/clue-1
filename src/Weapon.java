@@ -3,4 +3,8 @@ public class Weapon extends Card {
         this.name = name;
     }
 
+    @Override
+    String getDescription() {
+        return "A " + name;
+    }
 }
