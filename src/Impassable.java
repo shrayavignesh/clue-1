@@ -1,6 +1,3 @@
-package Cluedo;
-
-
 public class Impassable extends Card {
     final boolean showPassable;
 

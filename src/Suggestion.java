@@ -1,14 +1,7 @@
-package Cluedo;
-
-import Cluedo.Card;
-import Cluedo.ClueCharacter;
-import Cluedo.Player;
-import Cluedo.Room;
-
 import java.util.ArrayList;
 
 public class Suggestion {
-    //Curent Cluedo.Player
+    // Current Cluedo.Player
     final Weapon weapon;
     final ClueCharacter character;
     final Room room;
@@ -34,10 +27,10 @@ public class Suggestion {
 
         Author: Laurence Malata
      */
-    public boolean checkHand (ArrayList<Card> hand, Player nextPlayer){
+    public boolean checkHand(ArrayList<Card> hand, Player nextPlayer) {
         boolean present = false;
-        for(Card card : hand){
-            if(card.equals(character) || card.equals(room) || card.equals(weapon)){
+        for (Card card : hand) {
+            if (card.equals(character) || card.equals(room) || card.equals(weapon)) {
                 present = true;
                 player_with_Card = nextPlayer;
                 presentCards.add(card);
@@ -51,7 +44,7 @@ public class Suggestion {
 
         Author: Laurence Malata
      */
-    public Player getPlayerWithCard(){
+    public Player getPlayerWithCard() {
         return player_with_Card;
     }
 
@@ -60,7 +53,7 @@ public class Suggestion {
 
         Author: Laurence Malata
      */
-    public ArrayList<Card> getPresentCards(){
+    public ArrayList<Card> getPresentCards() {
         return presentCards;
     }
 }
