@@ -5,17 +5,16 @@ public class Suggestion {
     final Weapon weapon;
     final ClueCharacter character;
     final Room room;
-    final Player player;
 
     //Neighbouring Player
     private Player playerWithCard;
     private ArrayList<Card> presentCards;
 
-    public Suggestion(Weapon weapon, ClueCharacter character, Room room, Player player) {
+    public Suggestion(Weapon weapon, ClueCharacter character, Room room) {
         this.weapon = weapon;
         this.character = character;
         this.room = room;
-        this.player = player;
+
     }
 
     /*
