@@ -25,14 +25,14 @@ public class Player {
     }
     
     // Getters
-    public List<Card> getHand(){return Collections.unmodifiableList(hand);}
-    public Room getCurrentRoom(){return currentRoom;}
-    public Room getPreviousRoom(){return previousRoom;}
-    public boolean canStillPlay(){return canPlay;}
+    public List<Card> getHand() { return Collections.unmodifiableList(hand); }
+    public Room getCurrentRoom() { return currentRoom; }
+    public Room getPreviousRoom() { return previousRoom; }
+    public boolean canStillPlay() { return canPlay; }
     
     // Setters
-    public void setCurrentRoom(Room r){currentRoom = r;}
-    public void setPreviousRoom(Room r){previousRoom = r;}
-    public void setPlayStatus(boolean b){canPlay = b;}
+    public void setCurrentRoom(Room r) { currentRoom = r; }
+    public void setPreviousRoom(Room r){ previousRoom = r; }
+    public void setPlayStatus(boolean b) { canPlay = b; }
 	
 }
