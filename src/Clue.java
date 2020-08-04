@@ -118,35 +118,35 @@ public class Clue {
      * Loads room name and dimensions into map
      */
     public static void loadRooms() {
-        rooms.add(new Room("Kitchen", new Pair<>(1, 1)));
-        roomLocations.put(rooms.get(rooms.size() - 1), new Pair<>(5, 5));
+        rooms.add(new Room("Kitchen", new Pair<>(0, 0)));
+        roomLocations.put(rooms.get(rooms.size() - 1), new Pair<>(7, 7));
 
-        rooms.add(new Room("Ball Room", new Pair<>(2, 9)));
-        roomLocations.put(rooms.get(rooms.size() - 1), new Pair<>(5, 7));
+        rooms.add(new Room("Ball Room", new Pair<>(0, 9)));
+        roomLocations.put(rooms.get(rooms.size() - 1), new Pair<>(8, 8));
 
-        rooms.add(new Room("Conservatory", new Pair<>(1, 19)));
-        roomLocations.put(rooms.get(rooms.size() - 1), new Pair<>(3, 5));
+        rooms.add(new Room("Conservatory", new Pair<>(0, 19)));
+        roomLocations.put(rooms.get(rooms.size() - 1), new Pair<>(5, 6));
 
         rooms.add(new Room("Billard Room", new Pair<>(8, 19)));
-        roomLocations.put(rooms.get(rooms.size() - 1), new Pair<>(4, 5));
+        roomLocations.put(rooms.get(rooms.size() - 1), new Pair<>(5, 6));
 
         rooms.add(new Room("Library", new Pair<>(14, 19)));
-        roomLocations.put(rooms.get(rooms.size() - 1), new Pair<>(4, 4));
+        roomLocations.put(rooms.get(rooms.size() - 1), new Pair<>(5, 6));
 
         rooms.add(new Room("Study", new Pair<>(21, 18)));
-        roomLocations.put(rooms.get(rooms.size() - 1), new Pair<>(3, 6));
+        roomLocations.put(rooms.get(rooms.size() - 1), new Pair<>(3, 7));
 
         rooms.add(new Room("Hall", new Pair<>(18, 10)));
-        roomLocations.put(rooms.get(rooms.size() - 1), new Pair<>(6, 5));
+        roomLocations.put(rooms.get(rooms.size() - 1), new Pair<>(6, 6));
 
-        rooms.add(new Room("Lounge", new Pair<>(19, 1)));
-        roomLocations.put(rooms.get(rooms.size() - 1), new Pair<>(4, 6));
+        rooms.add(new Room("Lounge", new Pair<>(19, 0)));
+        roomLocations.put(rooms.get(rooms.size() - 1), new Pair<>(5, 8));
 
-        rooms.add(new Room("Dining Room", new Pair<>(10, 1)));
-        roomLocations.put(rooms.get(rooms.size() - 1), new Pair<>(5, 7));
+        rooms.add(new Room("Dining Room", new Pair<>(10, 0)));
+        roomLocations.put(rooms.get(rooms.size() - 1), new Pair<>(6, 9));
 
         rooms.add(new Room("Middle Room", new Pair<>(10, 11)));
-        roomLocations.put(rooms.get(rooms.size() - 1), new Pair<>(6, 4));
+        roomLocations.put(rooms.get(rooms.size() - 1), new Pair<>(6, 5));
     }
 
     /**
@@ -186,6 +186,7 @@ public class Clue {
     
     public static void placeCards() {
     	placeRooms();
+    	setEntrances();
     }
     
     /**
@@ -271,7 +272,7 @@ public class Clue {
         for (Pair<Integer, Integer> location : entranceLocations) {
             int row = location.getOne();
             int col = location.getTwo();
-            Room room = (Room) board[row][col];
+            board[row][col] = new Impassable(false);
         }
 
     }
