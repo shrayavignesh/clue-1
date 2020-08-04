@@ -103,8 +103,10 @@ public class Clue {
                     playerName = s.nextLine();
                 }
 
-
-                players.add(new Player(playerName, characters.get(i)));
+                ClueCharacter clueChar = characters.get(i);
+                Player player = new Player(playerName, clueChar);
+                players.add(player);
+                clueChar.addPlayer(player);  // Maps the player to the assigned character
                 System.out.printf("Player %d (%s) is: %s\n", (i + 1), playerName, characters.get(i).name);
             }
         }
@@ -250,5 +252,23 @@ public class Clue {
             Room room = (Room) board[row][col];
         }
 
+    }
+    
+    public static String printBoard() {
+    	String output = "";
+    	for(int row=0;row<24;row++) {
+    		output += "|";
+    		for(int col=0;col<25;col++) {
+    			Card cell = board[row][col];
+    			if(cell != null) {
+    				output += cell.getCharRep() + "|";
+    			} 
+    			else {
+    				output += "_|";    				
+    			}
+   			}
+   			output += "\n";
+   		}
+   		return output;
     }
 }
