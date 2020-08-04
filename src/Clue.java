@@ -1,7 +1,7 @@
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.Queue;
-
-import javafx.util.Pair;
 
 public class Clue {
     private static ArrayList<Weapon> weapons;
@@ -89,8 +89,8 @@ public class Clue {
 	  * @param dimension, dimension of room
 	  */
 	 public static void placeRooms(String roomName, Pair<Integer, Integer> dimension) {
-		 int rows = dimension.getKey();
-		 int cols = dimension.getValue();
+		 int rows = dimension.getOne();
+		 int cols = dimension.getTwo();
 		 if (roomName.equals("Middle Room")){  // Middle room can't be accessed
 			 for (int row = 0; row < rows; row++) {
 				 for (int col = 0; col < cols; col++) {
@@ -111,8 +111,8 @@ public class Clue {
 	  * @param location, starting location of character
 	  */
 	 public static void placeCharacters(String charName, Pair<Integer, Integer> location) {
-		 int row = location.getKey();
-		 int col = location.getValue();
+		 int row = location.getOne();
+		 int col = location.getTwo();
 		 ClueCharacter character = new ClueCharacter(charName);
 		 board[row][col] = character;
 		 characters.add(character);
@@ -146,8 +146,8 @@ public class Clue {
 	  */
 	 public static void setEntrances() {
 		 for (Pair<Integer, Integer> location : entranceLocations) {
-			 int row = location.getKey();
-			 int col = location.getValue();
+			 int row = location.getOne();
+			 int col = location.getTwo();
 			 Room room = (Room) board[row][col];
 			 room.setEntrance();
 		 }
