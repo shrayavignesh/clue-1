@@ -1,28 +1,35 @@
 import java.util.ArrayList;
-import java.util.Random;
+import java.util.Collections;
+import java.util.List;
 
 public class Player {
-    final ClueCharacter clueCharacter;
-    private ArrayList<Card> hand = new ArrayList<>();
-    public Integer moving = null;
-    private Room currentRoom = null; //This is changed during their turn
-    private Room previousRoom = null; //This is changed after their turn ends
+	final ClueCharacter clueCharacter;
+    private List<Card> hand = new ArrayList<>();
+    private Room currentRoom = null;
+    private Room previousRoom = null;
     private boolean canPlay = true;
 
     public Player(ClueCharacter character) {
         clueCharacter = character;
     }
-
-    public void move() {
-        //If a free cell, move the person from 1 position to another in array
-        //
+    
+    /**
+     * Adds card to hand
+     * @param card to be added
+     */
+    public void addCard(Card card) {
+    	hand.add(card);
     }
-  
-    public void Suggestion() {
-
-    }
-
-    public void Accusation() {
-      
-    }
+    
+    // Getters
+    public List<Card> getHand(){return Collections.unmodifiableList(hand);}
+    public Room getCurrentRoom(){return currentRoom;}
+    public Room getPreviousRoom(){return previousRoom;}
+    public boolean canStillPlay(){return canPlay;}
+    
+    // Setters
+    public void setCurrentRoom(Room r){currentRoom = r;}
+    public void setPreviousRoom(Room r){previousRoom = r;}
+    public void setPlayStatus(boolean b){canPlay = b;}
+	
 }
