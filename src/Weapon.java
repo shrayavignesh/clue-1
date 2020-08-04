@@ -1,17 +1,11 @@
-package Cluedo;
-
-import Cluedo.Card;
-
+=======
 public class Weapon extends Card {
-  
-    private String weaponName;
-  
-    public Weapon(String weaponName){
-      this.weaponName = weaponName;
+    public Weapon(String name) {
+        this.name = name;
     }
-  
+
     @Override
-    public String cardDescription(){
-      return weaponName;
+    String getDescription() {
+        return "A " + name;
     }
 }

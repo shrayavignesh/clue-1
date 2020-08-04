@@ -1,4 +1,3 @@
-
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
@@ -10,7 +9,6 @@ import java.util.Queue;
 import javafx.util.Pair;
 
 public class Clue {
-	
     private static ArrayList<Weapon> weapons;
     private ArrayList<Room> rooms;
     private static ArrayList<ClueCharacter> characters;
@@ -46,7 +44,7 @@ public class Clue {
 	/**
 	 * Sets up the game
 	 */
-	 public static void setupGame(int playerCount){
+	 public static void setupGame(int playerCount) {
 	 }
 	 
 	 /**

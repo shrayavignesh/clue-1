@@ -1,10 +1,8 @@
-package Cluedo;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
 public class Player {
-	
 	final ClueCharacter clueCharacter;
     private List<Card> hand = new ArrayList<>();
     private Room currentRoom = null;
