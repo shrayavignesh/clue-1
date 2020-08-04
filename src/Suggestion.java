@@ -8,7 +8,7 @@ public class Suggestion {
     final Player player;
 
     //Neighbouring Player
-    private Player player_with_Card;
+    private Player playerWithCard;
     private ArrayList<Card> presentCards;
 
     public Suggestion(Weapon weapon, ClueCharacter character, Room room, Player player) {
@@ -32,7 +32,7 @@ public class Suggestion {
         for (Card card : hand) {
             if (card.equals(character) || card.equals(room) || card.equals(weapon)) {
                 present = true;
-                player_with_Card = nextPlayer;
+                playerWithCard = nextPlayer;
                 presentCards.add(card);
             }
         }
@@ -45,7 +45,7 @@ public class Suggestion {
         Author: Laurence Malata
      */
     public Player getPlayerWithCard() {
-        return player_with_Card;
+        return playerWithCard;
     }
 
     /*
