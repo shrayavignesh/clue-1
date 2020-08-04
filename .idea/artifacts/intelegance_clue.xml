@@ -1,0 +1,8 @@
+<component name="ArtifactManager">
+  <artifact type="jar" name="intelegance_clue">
+    <output-path>$PROJECT_DIR$/out/intelegance_clue</output-path>
+    <root id="archive" name="intelegance_clue.jar">
+      <element id="dir-copy" path="$PROJECT_DIR$/src" />
+    </root>
+  </artifact>
+</component>
