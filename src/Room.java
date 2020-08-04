@@ -3,9 +3,12 @@ public class Room extends Card {
     ClueCharacter other = null;
     Weapon weapon;
     Weapon otherWeapon;
+    Pair<Integer, Integer> TLSquare;  // top left square, to determine where to start placing the room on the board
+    boolean canEnter = false;
     
-    public Room(String roomName){
+    public Room(String roomName, Pair<Integer, Integer> TLSquare){
         this.name = roomName;
+        this.TLSquare = TLSquare;
     }
     
     /**
@@ -34,6 +37,10 @@ public class Room extends Card {
     */
     public void bringWeaponToRoom(Weapon otherWeapon){
         this.otherWeapon = otherWeapon;
+    }
+    
+    public void setEntrance() {
+    	canEnter = true;
     }
     
     @Override
