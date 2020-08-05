@@ -19,6 +19,8 @@ public class Clue {
     private static final ArrayList<Player> players = new ArrayList<>();
     private static Queue<Player> playOrder;
 
+    public Player currentTurn; //to keep track of which players turn it is
+
     /**
      * Locations
      */
@@ -316,6 +318,37 @@ public class Clue {
                 toDeal.remove(toDeal.size());
             }
         }
+
+    }
+
+    public void makeSuggestion(Player p, Suggestion s){
+        //Move player to suggested room
+        p.setCurrentRoom(s.getRoom());
+
+        //Move weapon to suggested room
+        s.getWeapon().setRoom(s.getRoom());
+
+
+        //REFUTATIONS HERE...
+
+        //Player can choose to make an accusation
+        System.out.print("Enter 'Y' if you would like to make an accusation that " + s.getCharacter().toString()
+                + " commited a murder using " + s.getWeapon().toString() + " in " + s.getRoom().toString());
+
+        if (INPUT.nextLine().equals("Y")){
+            //Make accusation
+            makeAccusation(s);
+        }
+
+        //Game resumes
+    }
+
+    public void makeAccusation(Suggestion s){
+        if (s == gameSolution){
+            //PLAYER WINS
+        }
+
+        //Players accusation is incorrect and they get kicked out of the game
 
     }
 }
