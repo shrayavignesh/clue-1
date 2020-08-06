@@ -19,12 +19,20 @@ public class Clue {
     private static final ArrayList<Player> players = new ArrayList<>();
     private static Queue<Player> playOrder;
 
+    public Player currentTurn; //to keep track of which players turn it is
+
     /**
      * Locations
      */
     private static final Map<Room, Pair<Integer, Integer>> roomLocations = new HashMap<>();
     private static final Map<ClueCharacter, Pair<Integer, Integer>> charLocations = new HashMap<>();
     private static final ArrayList<Pair<Integer, Integer>> entranceLocations = new ArrayList<>();
+
+
+    Suggestion gameSolution; // Final solution
+    private static final Random randomize = new Random(); // For shuffling purposes
+    private static final Scanner INPUT = new Scanner(System.in); // Input stream
+
 
     /**
      * TODO - Main Clue event loop
@@ -68,8 +76,8 @@ public class Clue {
         Suggestion mainAccusation = new Suggestion(
                 weapons.remove(0),
                 characters.remove(0),
-                rooms.remove(0)
-        );
+                rooms.remove(0),
+                null);
 
         // 3. Share out the remaining Cards ()
         ArrayList<Card> deck = new ArrayList<>();
@@ -276,6 +284,96 @@ public class Clue {
         }
 
     }
+
+    /**
+     * Validity check upon users input
+     * If input is invalid, keeps asking for a valid input
+     *
+     * @param i, user input of number of players
+     */
+    static int validInputCheck(int i) {
+        while(true){
+            if(i >= MIN_PLAYERS && i <= MAX_PLAYERS){
+                return i;
+            }
+            else {
+                System.out.println("Number of players must be between 2 and 6...");
+                return validInputCheck( Integer.parseInt(INPUT.nextLine()) );
+            }
+        }
+
+    }
+
+    /**
+     * Creates game solution by randomly selecting a weapon, room and murderer
+     */
+    public void makeSolution() {
+        // randomly choosing a murder weapon
+        Weapon w = weapons.remove(randomize.nextInt(weapons.size()));
+
+        // randomly choosing a murder room
+        Room r = rooms.remove(randomize.nextInt(rooms.size()));
+
+        // randomly choosing a murderer
+        ClueCharacter c = characters.remove(randomize.nextInt(characters.size()));
+
+        gameSolution = new Suggestion(w, c, r, null);
+    }
+
+
+    /**
+     * Deals remaining cards (not including solution cards) to players hands
+     * NOTE: this method must be called after makeSolution()
+     */
+    public void dealCards() {
+        ArrayList <Card> toDeal = new ArrayList<>();
+
+        //add all cards but solution cards to new deck
+        for(Weapon w : weapons) toDeal.add(w);
+        for(ClueCharacter c : characters) toDeal.add(c);
+        for(Room r : rooms) toDeal.add(r);
+
+        //shuffle said deck
+        Collections.shuffle(toDeal);
+
+        //deal between players
+        while(!toDeal.isEmpty()) {
+            for (Player p : players) {
+                p.addCard(toDeal.get(toDeal.size()));
+                toDeal.remove(toDeal.size());
+            }
+        }
+
+    }
+
+    public void makeSuggestion(Player p, Suggestion s){
+        //Move player to suggested room
+        p.setCurrentRoom(s.getRoom());
+
+        //Move weapon to suggested room
+        s.getWeapon().setRoom(s.getRoom());
+
+
+        //REFUTATIONS HERE...
+
+        //Player can choose to make an accusation
+        System.out.print("Enter 'Y' if you would like to make an accusation that " + s.getCharacter().toString()
+                + " commited a murder using " + s.getWeapon().toString() + " in " + s.getRoom().toString());
+
+        if (INPUT.nextLine().equals("Y")){
+            //Make accusation
+            makeAccusation(s);
+        }
+
+        //Game resumes
+    }
+
+    public void makeAccusation(Suggestion s){
+        if (s == gameSolution){
+            //PLAYER WINS
+        }
+
+        //Players accusation is incorrect and they get kicked out of the game
     
     public static String printBoard() {
     	String output = "";
