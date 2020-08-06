@@ -10,7 +10,7 @@ public class Suggestion {
     private Player playerWithCard;
     private ArrayList<Card> presentCards;
 
-    public Suggestion(Weapon weapon, ClueCharacter character, Room room, Object o) {
+    public Suggestion(Weapon weapon, ClueCharacter character, Room room) {
         this.weapon = weapon;
         this.character = character;
         this.room = room;
