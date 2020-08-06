@@ -3,16 +3,16 @@ import java.util.*;
 public class Clue {
     static Card[][] board = new Card[24][25];
 
-    private static final int MIN_PLAYERS = 2; //2 Players
-    private static final int MAX_PLAYERS = 6; //6 Players
+    private static final int MIN_PLAYERS = 2;
+    private static final int MAX_PLAYERS = 6;
 
     /**
      * Cards
      */
-    private static final ArrayList<Weapon> weapons = new ArrayList<>();         //Contains all weapons
-    private static final ArrayList<Room> rooms = new ArrayList<>();             //Contains all rooms
-    private static final ArrayList<ClueCharacter> characters = new ArrayList<>();   //Temporary collection
-    private static ArrayList<ClueCharacter> allCharacters = new ArrayList<>();  //Contains all characters
+    private static final ArrayList<Weapon> weapons = new ArrayList<>();
+    private static final ArrayList<Room> rooms = new ArrayList<>();
+    private static final ArrayList<ClueCharacter> characters = new ArrayList<>();
+    private static ArrayList<ClueCharacter> allCharacters = new ArrayList<>();
 
     /**
      * PlayerInfo
@@ -21,12 +21,20 @@ public class Clue {
     private static Queue<ClueCharacter> characterOrder = new ArrayDeque<>();
     private static Queue<Player> playOrder = new ArrayDeque<>();
 
+    public Player currentTurn;
+
     /**
      * Locations
      */
     private static final Map<Room, Pair<Integer, Integer>> roomLocations = new HashMap<>();
     private static final Map<ClueCharacter, Pair<Integer, Integer>> charLocations = new HashMap<>();
     private static final ArrayList<Pair<Integer, Integer>> entranceLocations = new ArrayList<>();
+
+
+    Suggestion gameSolution; // Final solution
+    private static final Random randomize = new Random(); // For shuffling purposes
+    private static final Scanner INPUT = new Scanner(System.in); // Input stream
+
 
     /**
      * TODO - Main Clue event loop
@@ -115,7 +123,6 @@ public class Clue {
                     System.out.print("Enter name for Player " + (i + 1) + ": ");
                     playerName = s.nextLine();
                 }
-
                 System.out.print("Which character do you want to play? Enter the number:\n");
                 for(int j = 0; j < characters.size(); j++){
                     if(characters.get(j).getPlayer() == null){
@@ -151,6 +158,8 @@ public class Clue {
                 playingCharacters.offer(c);
                 order.add(c.getOrder());
             }
+            placeCards();
+            System.out.println(printBoard());
         }
 
         //Clear Screen 20 times
@@ -194,35 +203,35 @@ public class Clue {
      * Loads room name and dimensions into map
      */
     public static void loadRooms() {
-        rooms.add(new Room("Kitchen"));
+        rooms.add(new Room("Kitchen", new Pair<>(0, 0)));
+        roomLocations.put(rooms.get(rooms.size() - 1), new Pair<>(7, 7));
+
+        rooms.add(new Room("Ball Room", new Pair<>(0, 9)));
+        roomLocations.put(rooms.get(rooms.size() - 1), new Pair<>(8, 8));
+
+        rooms.add(new Room("Conservatory", new Pair<>(0, 19)));
+        roomLocations.put(rooms.get(rooms.size() - 1), new Pair<>(5, 6));
+
+        rooms.add(new Room("Billard Room", new Pair<>(8, 19)));
+        roomLocations.put(rooms.get(rooms.size() - 1), new Pair<>(5, 6));
+
+        rooms.add(new Room("Library", new Pair<>(14, 19)));
+        roomLocations.put(rooms.get(rooms.size() - 1), new Pair<>(5, 6));
+
+        rooms.add(new Room("Study", new Pair<>(21, 18)));
+        roomLocations.put(rooms.get(rooms.size() - 1), new Pair<>(3, 7));
+
+        rooms.add(new Room("Hall", new Pair<>(18, 10)));
         roomLocations.put(rooms.get(rooms.size() - 1), new Pair<>(6, 6));
 
-        rooms.add(new Room("Ball Room"));
-        roomLocations.put(rooms.get(rooms.size() - 1), new Pair<>(8, 6));
+        rooms.add(new Room("Lounge", new Pair<>(19, 0)));
+        roomLocations.put(rooms.get(rooms.size() - 1), new Pair<>(5, 8));
 
-        rooms.add(new Room("Conservatory"));
-        roomLocations.put(rooms.get(rooms.size() - 1), new Pair<>(6, 4));
+        rooms.add(new Room("Dining Room", new Pair<>(10, 0)));
+        roomLocations.put(rooms.get(rooms.size() - 1), new Pair<>(6, 9));
 
-        rooms.add(new Room("Billard Room"));
+        rooms.add(new Room("Middle Room", new Pair<>(10, 11)));
         roomLocations.put(rooms.get(rooms.size() - 1), new Pair<>(6, 5));
-
-        rooms.add(new Room("Library"));
-        roomLocations.put(rooms.get(rooms.size() - 1), new Pair<>(5, 5));
-
-        rooms.add(new Room("Study"));
-        roomLocations.put(rooms.get(rooms.size() - 1), new Pair<>(7, 3));
-
-        rooms.add(new Room("Hall"));
-        roomLocations.put(rooms.get(rooms.size() - 1), new Pair<>(6, 7));
-
-        rooms.add(new Room("Lounge"));
-        roomLocations.put(rooms.get(rooms.size() - 1), new Pair<>(7, 5));
-
-        rooms.add(new Room("Dining Room"));
-        roomLocations.put(rooms.get(rooms.size() - 1), new Pair<>(8, 6));
-
-        rooms.add(new Room("Middle Room"));
-        roomLocations.put(rooms.get(rooms.size() - 1), new Pair<>(5, 7));
     }
 
     /**
@@ -265,28 +274,49 @@ public class Clue {
         weapons.add(new Weapon("Rope"));
         weapons.add(new Weapon("Spanner"));
     }
-
+    
+    public static void placeCards() {
+    	placeRooms();
+    	setEntrances();
+    }
+    
     /**
      * Places room on the board
      *
      * @param roomName,  Name of room
      * @param dimension, dimension of room
      */
-    public static void placeRooms(String roomName, Pair<Integer, Integer> dimension) {
-        int rows = dimension.getOne();
-        int cols = dimension.getTwo();
-        if (roomName.equals("Middle Room")) {  // Middle room can't be accessed
-            for (int row = 0; row < rows; row++) {
-                for (int col = 0; col < cols; col++) {
-                    board[row][col] = new Impassable(true);
-                }
-            }
-        }
-        for (int row = 0; row < rows; row++) {
-            for (int col = 0; col < cols; col++) {
-                board[row][col] = new Room(roomName);
-            }
-        }
+    public static void placeRooms() {
+    	Iterator iterator = roomLocations.entrySet().iterator();
+    	while (iterator.hasNext()) {
+    		Map.Entry<Room, Pair<Integer, Integer>> roomLocation = (Map.Entry) iterator.next();
+    		Room room = (Room) roomLocation.getKey();
+    		Pair<Integer, Integer> dimension = (Pair<Integer, Integer>) roomLocation.getValue();
+    		int height = (int) dimension.getOne();
+    		int width = (int) dimension.getTwo();
+    		int nextRow = room.TLSquare.getOne();  // starting row
+    		int nextCol = room.TLSquare.getTwo();  // starting column
+    		if (room.name.equals("Middle Room")) {  // Middle room can't be accessed
+    			for (int i = 0; i < height; i++) {
+    				for (int j = 0; j < width; j++) {
+    					board[nextRow][nextCol] = new Impassable(true);
+    					nextCol++;
+    				}
+    				nextRow++;
+    				nextCol = room.TLSquare.getTwo();  // need to set back to starting column
+    			}
+    		}
+    		else {  // is a room that can be accessed
+    			for (int i = 0; i < height; i++) {
+    				for (int j = 0; j < width; j++) {
+    					board[nextRow][nextCol] = room;
+    					nextCol++;
+    				}
+    				nextRow++;
+    				nextCol = room.TLSquare.getTwo();  // need to set back to starting column
+    			}
+    		}
+    	}
     }
 
     /**
@@ -333,7 +363,117 @@ public class Clue {
         for (Pair<Integer, Integer> location : entranceLocations) {
             int row = location.getOne();
             int col = location.getTwo();
-            Room room = (Room) board[row][col];
+            board[row][col] = new Impassable(false);
         }
+
+    }
+
+    /**
+     * Validity check upon users input
+     * If input is invalid, keeps asking for a valid input
+     *
+     * @param i, user input of number of players
+     */
+    static int validInputCheck(int i) {
+        while(true){
+            if(i >= MIN_PLAYERS && i <= MAX_PLAYERS){
+                return i;
+            }
+            else {
+                System.out.println("Number of players must be between 2 and 6...");
+                return validInputCheck( Integer.parseInt(INPUT.nextLine()) );
+            }
+        }
+
+    }
+
+    /**
+     * Creates game solution by randomly selecting a weapon, room and murderer
+     */
+    public void makeSolution() {
+        // randomly choosing a murder weapon
+        Weapon w = weapons.remove(randomize.nextInt(weapons.size()));
+
+        // randomly choosing a murder room
+        Room r = rooms.remove(randomize.nextInt(rooms.size()));
+
+        // randomly choosing a murderer
+        ClueCharacter c = characters.remove(randomize.nextInt(characters.size()));
+
+        gameSolution = new Suggestion(w, c, r, null);
+    }
+
+
+    /**
+     * Deals remaining cards (not including solution cards) to players hands
+     * NOTE: this method must be called after makeSolution()
+     */
+    public void dealCards() {
+        ArrayList <Card> toDeal = new ArrayList<>();
+
+        //add all cards but solution cards to new deck
+        for(Weapon w : weapons) toDeal.add(w);
+        for(ClueCharacter c : characters) toDeal.add(c);
+        for(Room r : rooms) toDeal.add(r);
+
+        //shuffle said deck
+        Collections.shuffle(toDeal);
+
+        //deal between players
+        while(!toDeal.isEmpty()) {
+            for (Player p : players) {
+                p.addCard(toDeal.get(toDeal.size()));
+                toDeal.remove(toDeal.size());
+            }
+        }
+
+    }
+
+    public void makeSuggestion(Player p, Suggestion s){
+        //Move player to suggested room
+        p.setCurrentRoom(s.getRoom());
+
+        //Move weapon to suggested room
+        s.getWeapon().setRoom(s.getRoom());
+
+
+        //REFUTATIONS HERE...
+
+        //Player can choose to make an accusation
+        System.out.print("Enter 'Y' if you would like to make an accusation that " + s.getCharacter().toString()
+                + " commited a murder using " + s.getWeapon().toString() + " in " + s.getRoom().toString());
+
+        if (INPUT.nextLine().equals("Y")){
+            //Make accusation
+            makeAccusation(s);
+        }
+
+        //Game resumes
+    }
+
+    public void makeAccusation(Suggestion s){
+        if (s == gameSolution){
+            //PLAYER WINS
+        }
+    }
+
+        //Players accusation is incorrect and they get kicked out of the game
+    
+    public static String printBoard() {
+    	String output = "";
+    	for(int row=0;row<24;row++) {
+    		output += "|";
+    		for(int col=0;col<25;col++) {
+    			Card cell = board[row][col];
+    			if(cell != null) {
+    				output += cell.getCharRep() + "|";
+    			} 
+    			else {
+    				output += "_|";    				
+    			}
+   			}
+   			output += "\n";
+   		}
+   		return output;
     }
 }
