@@ -111,10 +111,14 @@ public class Clue {
                     playerName = s.nextLine();
                 }
 
-
-                players.add(new Player(playerName, characters.get(i)));
+                ClueCharacter clueChar = characters.get(i);
+                Player player = new Player(playerName, clueChar);
+                players.add(player);
+                clueChar.addPlayer(player);  // Maps the player to the assigned character
                 System.out.printf("Player %d (%s) is: %s\n", (i + 1), playerName, characters.get(i).name);
             }
+            placeCards();
+            System.out.println(printBoard());
         }
     }
 
@@ -122,35 +126,35 @@ public class Clue {
      * Loads room name and dimensions into map
      */
     public static void loadRooms() {
-        rooms.add(new Room("Kitchen"));
+        rooms.add(new Room("Kitchen", new Pair<>(0, 0)));
+        roomLocations.put(rooms.get(rooms.size() - 1), new Pair<>(7, 7));
+
+        rooms.add(new Room("Ball Room", new Pair<>(0, 9)));
+        roomLocations.put(rooms.get(rooms.size() - 1), new Pair<>(8, 8));
+
+        rooms.add(new Room("Conservatory", new Pair<>(0, 19)));
+        roomLocations.put(rooms.get(rooms.size() - 1), new Pair<>(5, 6));
+
+        rooms.add(new Room("Billard Room", new Pair<>(8, 19)));
+        roomLocations.put(rooms.get(rooms.size() - 1), new Pair<>(5, 6));
+
+        rooms.add(new Room("Library", new Pair<>(14, 19)));
+        roomLocations.put(rooms.get(rooms.size() - 1), new Pair<>(5, 6));
+
+        rooms.add(new Room("Study", new Pair<>(21, 18)));
+        roomLocations.put(rooms.get(rooms.size() - 1), new Pair<>(3, 7));
+
+        rooms.add(new Room("Hall", new Pair<>(18, 10)));
         roomLocations.put(rooms.get(rooms.size() - 1), new Pair<>(6, 6));
 
-        rooms.add(new Room("Ball Room"));
-        roomLocations.put(rooms.get(rooms.size() - 1), new Pair<>(8, 6));
+        rooms.add(new Room("Lounge", new Pair<>(19, 0)));
+        roomLocations.put(rooms.get(rooms.size() - 1), new Pair<>(5, 8));
 
-        rooms.add(new Room("Conservatory"));
-        roomLocations.put(rooms.get(rooms.size() - 1), new Pair<>(6, 4));
+        rooms.add(new Room("Dining Room", new Pair<>(10, 0)));
+        roomLocations.put(rooms.get(rooms.size() - 1), new Pair<>(6, 9));
 
-        rooms.add(new Room("Billard Room"));
+        rooms.add(new Room("Middle Room", new Pair<>(10, 11)));
         roomLocations.put(rooms.get(rooms.size() - 1), new Pair<>(6, 5));
-
-        rooms.add(new Room("Library"));
-        roomLocations.put(rooms.get(rooms.size() - 1), new Pair<>(5, 5));
-
-        rooms.add(new Room("Study"));
-        roomLocations.put(rooms.get(rooms.size() - 1), new Pair<>(7, 3));
-
-        rooms.add(new Room("Hall"));
-        roomLocations.put(rooms.get(rooms.size() - 1), new Pair<>(6, 7));
-
-        rooms.add(new Room("Lounge"));
-        roomLocations.put(rooms.get(rooms.size() - 1), new Pair<>(7, 5));
-
-        rooms.add(new Room("Dining Room"));
-        roomLocations.put(rooms.get(rooms.size() - 1), new Pair<>(8, 6));
-
-        rooms.add(new Room("Middle Room"));
-        roomLocations.put(rooms.get(rooms.size() - 1), new Pair<>(5, 7));
     }
 
     /**
@@ -187,28 +191,49 @@ public class Clue {
         weapons.add(new Weapon("Rope"));
         weapons.add(new Weapon("Spanner"));
     }
-
+    
+    public static void placeCards() {
+    	placeRooms();
+    	setEntrances();
+    }
+    
     /**
      * Places room on the board
      *
      * @param roomName,  Name of room
      * @param dimension, dimension of room
      */
-    public static void placeRooms(String roomName, Pair<Integer, Integer> dimension) {
-        int rows = dimension.getOne();
-        int cols = dimension.getTwo();
-        if (roomName.equals("Middle Room")) {  // Middle room can't be accessed
-            for (int row = 0; row < rows; row++) {
-                for (int col = 0; col < cols; col++) {
-                    board[row][col] = new Impassable(true);
-                }
-            }
-        }
-        for (int row = 0; row < rows; row++) {
-            for (int col = 0; col < cols; col++) {
-                board[row][col] = new Room(roomName);
-            }
-        }
+    public static void placeRooms() {
+    	Iterator iterator = roomLocations.entrySet().iterator();
+    	while (iterator.hasNext()) {
+    		Map.Entry<Room, Pair<Integer, Integer>> roomLocation = (Map.Entry) iterator.next();
+    		Room room = (Room) roomLocation.getKey();
+    		Pair<Integer, Integer> dimension = (Pair<Integer, Integer>) roomLocation.getValue();
+    		int height = (int) dimension.getOne();
+    		int width = (int) dimension.getTwo();
+    		int nextRow = room.TLSquare.getOne();  // starting row
+    		int nextCol = room.TLSquare.getTwo();  // starting column
+    		if (room.name.equals("Middle Room")) {  // Middle room can't be accessed
+    			for (int i = 0; i < height; i++) {
+    				for (int j = 0; j < width; j++) {
+    					board[nextRow][nextCol] = new Impassable(true);
+    					nextCol++;
+    				}
+    				nextRow++;
+    				nextCol = room.TLSquare.getTwo();  // need to set back to starting column
+    			}
+    		}
+    		else {  // is a room that can be accessed
+    			for (int i = 0; i < height; i++) {
+    				for (int j = 0; j < width; j++) {
+    					board[nextRow][nextCol] = room;
+    					nextCol++;
+    				}
+    				nextRow++;
+    				nextCol = room.TLSquare.getTwo();  // need to set back to starting column
+    			}
+    		}
+    	}
     }
 
     /**
@@ -255,7 +280,7 @@ public class Clue {
         for (Pair<Integer, Integer> location : entranceLocations) {
             int row = location.getOne();
             int col = location.getTwo();
-            Room room = (Room) board[row][col];
+            board[row][col] = new Impassable(false);
         }
 
     }
@@ -349,6 +374,22 @@ public class Clue {
         }
 
         //Players accusation is incorrect and they get kicked out of the game
-
+    
+    public static String printBoard() {
+    	String output = "";
+    	for(int row=0;row<24;row++) {
+    		output += "|";
+    		for(int col=0;col<25;col++) {
+    			Card cell = board[row][col];
+    			if(cell != null) {
+    				output += cell.getCharRep() + "|";
+    			} 
+    			else {
+    				output += "_|";    				
+    			}
+   			}
+   			output += "\n";
+   		}
+   		return output;
     }
 }
