@@ -432,15 +432,57 @@ public class Clue {
 
     }
 
-    public void makeSuggestion(Player p, Suggestion s) {
-        //Move player to suggested room
-        p.setCurrentRoom(s.getRoom());
+    /**
+     * This loops over the players apart from the one that instantiated the suggestion
+     * @param player
+     * @param other
+     * @param s
+     */
+    public void makeSuggestion(Player player, Player other, Suggestion s) {
+        //Move other player to suggested room
+        other.setCurrentRoom(s.getRoom());
 
         //Move weapon to suggested room
         s.getWeapon().setRoom(s.getRoom());
 
 
-        //REFUTATIONS HERE...
+        for (Player p : playOrder) {
+            if (!p.equals(player)) {
+                ArrayList<Card> matchingCards = new ArrayList<>();
+
+                for (Card c : p.hand) {
+                    if (c == s.character || c == s.room || c == s.weapon) {
+                        matchingCards.add(c);
+                    }
+                }
+
+                getPlayerToScreen(p);
+
+                if (!matchingCards.isEmpty()) {
+                    System.out.println("You can refute with the following cards: ");
+                    System.out.println("(0) - None");
+                    for (int i = 0; i < matchingCards.size(); i++) {
+                        System.out.printf("(%d) - %s\n", i+1, matchingCards.get(i));
+                    }
+
+                    System.out.println("\nChoose a card to refute with:");
+                    int refIndex = INPUT.nextInt();
+
+                    if (refIndex != 0) p.refuteCard = matchingCards.get(refIndex-1);
+                } else {
+                    System.out.println("You have no cards to refute with");
+                }
+            }
+        }
+        
+        // Now relay the refute cards
+        for(Player p : playOrder) {
+            if (p.refuteCard != null) {
+                System.out.printf("%s has refuted with card \"%s\"\n", p.name, p.refuteCard);
+            }
+
+            p.refuteCard = null;
+        }
 
         //Player can choose to make an accusation
         System.out.print("Enter 'Y' if you would like to make an accusation that " + s.getCharacter().toString()
@@ -460,5 +502,12 @@ public class Clue {
         if (s == gameSolution) {
             //PLAYER WINS
         }
+    }
+
+    public void getPlayerToScreen(Player p) {
+        System.out.println("\n\n\n\n");
+        System.out.println("Player " + p.name + "'s turn.\n (Click to continue)");
+
+        INPUT.next();
     }
 }
