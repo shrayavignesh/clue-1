@@ -9,10 +9,12 @@ public class Player {
     final ClueCharacter clueCharacter;
     final String name;
     final Integer playerNumber;
-    private List<Card> hand = new ArrayList<>();
+    protected List<Card> hand = new ArrayList<>();
     private Room currentRoom = null;
     private Room previousRoom = null;
     private boolean canPlay = true;
+
+    protected Card refuteCard;
 
     public Player(String name, ClueCharacter character, Integer number) {
         clueCharacter = character;
