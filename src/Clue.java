@@ -200,38 +200,26 @@ public class Clue implements KeyListener{
      *  @author Brannon Haines
      */
     public static void movePlayer(String direction) {
+	ClueCharacter character = currentTurn.getClueCharacter();
+    	Pair<Integer, Integer> location = character.getLocation();
+    	int row = location.getOne();
+   	int col = location.getTwo();
     	if (direction.equals("Up")) {
-    		ClueCharacter character = currentTurn.getClueCharacter();
-    		Pair<Integer, Integer> location = character.getLocation();
-    		int row = location.getOne();
-    		int col = location.getTwo();
     		board[row-1][col] = character;
     		board[row][col] = null;
     		character.setLocation(new Pair<Integer, Integer>(row-1, col));
     	}
     	else if (direction.equals("Down")) {
-    		ClueCharacter character = currentTurn.getClueCharacter();
-    		Pair<Integer, Integer> location = character.getLocation();
-    		int row = location.getOne();
-    		int col = location.getTwo();
     		board[row+1][col] = character;
     		board[row][col] = null;
     		character.setLocation(new Pair<Integer, Integer>(row+1, col));
     	}
     	else if (direction.equals("Left")) {
-    		ClueCharacter character = currentTurn.getClueCharacter();
-    		Pair<Integer, Integer> location = character.getLocation();
-    		int row = location.getOne();
-    		int col = location.getTwo();
     		board[row][col-1] = character;
     		board[row][col] = null;
     		character.setLocation(new Pair<Integer, Integer>(row, col-1));
     	}
     	else if (direction.equals("Right")) {
-    		ClueCharacter character = currentTurn.getClueCharacter();
-    		Pair<Integer, Integer> location = character.getLocation();
-    		int row = location.getOne();
-    		int col = location.getTwo();
     		board[row][col+1] = character;
     		board[row][col] = null;
     		character.setLocation(new Pair<Integer, Integer>(row, col+1));
