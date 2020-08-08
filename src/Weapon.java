@@ -9,7 +9,7 @@ public class Weapon extends Card {
     }
 
     @Override
-    String getDescription() {
+    public String getDescription() {
         return "A " + name;
     }
 }
