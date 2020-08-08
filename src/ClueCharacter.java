@@ -1,6 +1,7 @@
 public class ClueCharacter extends Card {
     protected Player player;
     private Integer order;
+    private Pair<Integer, Integer> location;
 
     public ClueCharacter(String name, Integer number) {
         this.name = name;
@@ -18,6 +19,14 @@ public class ClueCharacter extends Card {
     }
 
     public Player getPlayer() { return player;}
+    
+    public void setLocation(Pair<Integer, Integer> location) {
+    	this.location = location;
+    }
+    
+    public Pair<Integer, Integer> getLocation(){
+    	return location;
+    }
 
     @Override
     String getDescription() {
