@@ -579,7 +579,7 @@ public class Clue implements KeyListener{
 
         //Return back to current player
         getPlayerToScreen(player);
-        System.out.print("Player " + s.getPlayerWithCard() + " has refuted card: "+player.getRefuteCard() +"\n");
+        System.out.print("Player " + s.getPlayerWithCard() + " has refuted card: " + player.getRefuteCard() +"\n");
         player.setPreviousRoom(player.getCurrentRoom());
         //After suggestion, current Player will be in this room until next turn
 
@@ -722,14 +722,6 @@ public class Clue implements KeyListener{
                 //
                 //Might need currentTurn.setCurrentRoom() <-- If player enters the room after moving
             }
-        }
-    }
-  
-    public void getPlayerToScreen(Player p) {
-        System.out.println("\n\n\n\n");
-        System.out.println("Player " + p.getName() + "'s turn.\n (Click to continue)");
-
-            playOrder.offer(currentTurn); //Player will be at the back of the playing order
         }
     }
 

@@ -1,4 +1,3 @@
-import java.util.ArrayList;
 import java.util.List;
 
 public class Suggestion {
@@ -23,7 +22,7 @@ public class Suggestion {
       * going to the next players stop.
       * During this method, if the player has a suggested card, the specific card will be added to the presentCards
       * ArrayList.. this is to assume that the player has either 1 to 3 suggested cards in their hand
-      * 
+      *
       * @Author:Laurence_Malata
      */
     public boolean checkHand(List<Card> hand, Player nextPlayer) {
@@ -39,17 +38,13 @@ public class Suggestion {
     }
 
     /**
-      * Returns a neighbouring player with a suggested card
-      * 
+      * Returns the present suggested cards of the neighbouring player
+      *
       * @Author:Laurence_Malata
      */
     public Player getPlayerWithCard() {
         return playerWithCard;
     }
-
-        Returns the present suggested cards of the neighbouring player
-       @Author:Laurence_Malata
-     */
     public String printCards(){
         String cards = "Pick a card to refute: Type the number: \n";
         int count = 0;

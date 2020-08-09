@@ -1,5 +1,4 @@
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 
 /**
@@ -7,7 +6,7 @@ import java.util.List;
  */
 public class Player {
     private final ClueCharacter clueCharacter;
-    private final String name;
+    protected final String name;
     private final Integer playerNumber;
     protected List<Card> hand = new ArrayList<>();
     private Room currentRoom = null;
@@ -48,4 +47,11 @@ public class Player {
     public void setPreviousRoom(Room r){ previousRoom = r; }
     public void setPlayStatus(boolean b) { canPlay = b; }
 
+    public void setRefuteCard(Card card) {
+        this.refuteCard = card;
+    }
+
+    public Card getRefuteCard() {
+        return this.refuteCard;
+    }
 }
