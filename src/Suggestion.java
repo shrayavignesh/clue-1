@@ -3,9 +3,9 @@ import java.util.List;
 
 public class Suggestion {
     // Current Player
-    final Weapon weapon;
-    final ClueCharacter character;
-    final Room room;
+    private final Weapon weapon;
+    private final ClueCharacter character;
+    private final Room room;
 
     //Neighbouring Player
     private Player playerWithCard;
@@ -19,13 +19,12 @@ public class Suggestion {
     }
 
     /**
-        A boolean method that check if the neighbouring player has the suggested cards. If true, iteration
-        going to the next players stop.
-
-        During this method, if the player has a suggested card, the specific card will be added to the presentCards
-        ArrayList.. this is to assume that the player has either 1 to 3 suggested cards in their hand
-
-        @Author:Laurence_Malata
+      * A boolean method that check if the neighbouring player has the suggested cards. If true, iteration
+      * going to the next players stop.
+      * During this method, if the player has a suggested card, the specific card will be added to the presentCards
+      * ArrayList.. this is to assume that the player has either 1 to 3 suggested cards in their hand
+      * 
+      * @Author:Laurence_Malata
      */
     public boolean checkHand(List<Card> hand, Player nextPlayer) {
         boolean present = false;
@@ -40,15 +39,15 @@ public class Suggestion {
     }
 
     /**
-        Returns a neighbouring player with a suggested card
-        @Author:Laurence_Malata
+      * Returns a neighbouring player with a suggested card
+      * 
+      * @Author:Laurence_Malata
      */
     public Player getPlayerWithCard() {
         return playerWithCard;
     }
 
-    /**
-        Prints suggested cards of the neighbouring player
+        Returns the present suggested cards of the neighbouring player
        @Author:Laurence_Malata
      */
     public String printCards(){

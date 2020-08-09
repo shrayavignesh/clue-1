@@ -21,7 +21,7 @@ public class Impassable extends Card {
 
     @Override
     char getCharRep() {
-    	if (!showPassable) {
+    	if (showPassable) {
     		return 'E';
     	}
         return 'X'; // ∅

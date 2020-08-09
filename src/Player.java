@@ -6,9 +6,9 @@ import java.util.List;
  * Represents a Player
  */
 public class Player {
-    final ClueCharacter clueCharacter;
-    final String name;
-    final Integer playerNumber;
+    private final ClueCharacter clueCharacter;
+    private final String name;
+    private final Integer playerNumber;
     protected List<Card> hand = new ArrayList<>();
     private Room currentRoom = null;
     private Room previousRoom = null;
