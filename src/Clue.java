@@ -1,6 +1,8 @@
+import java.awt.event.KeyEvent;
+import java.awt.event.KeyListener;
 import java.util.*;
 
-public class Clue {
+public class Clue implements KeyListener{
     private static final int MIN_PLAYERS = 2;
     private static final int MAX_PLAYERS = 6;
     /**
@@ -21,12 +23,12 @@ public class Clue {
     private static final ArrayList<Pair<Integer, Integer>> entranceLocations = new ArrayList<>();
     private static final Random randomize = new Random(); // For shuffling purposes
     private static final Scanner INPUT = new Scanner(System.in); // Input stream
-    static Card[][] board = new Card[24][25];
+    private static Card[][] board = new Card[24][25];
     private static ArrayList<ClueCharacter> allCharacters = new ArrayList<>();
     private static Queue<ClueCharacter> characterOrder = new ArrayDeque<>();
     private static Queue<Player> playOrder = new ArrayDeque<>();
-    public Player currentTurn;
-    Suggestion gameSolution; // Final solution
+    public static Player currentTurn;
+    public Suggestion gameSolution; // Final solution
 
     /**
      * TODO - Main Clue event loop
@@ -135,6 +137,8 @@ public class Clue {
             characters.get(number).addPlayer(players.get(players.size() - 1));
             System.out.printf("Player %d (%s) is %s\n\n", (i + 1), playerName, characters.get(number).name);
         }
+        placeCards();
+        printBoard();
     }
 
     /**
@@ -154,18 +158,17 @@ public class Clue {
             }
         }
 
-        // Clear Screen 20 times
-        for (int i = 0; i < 20; i++) System.out.println("");
+        clearScreen();
 
         System.out.print("Characters playing are :\n");
         for (Player p : players) {
-            System.out.printf("\tPlayer %d (%s) %s\n", p.playerNumber, p.name, p.clueCharacter.name);
+            System.out.printf("\tPlayer %d (%s) %s\n", p.getPlayerNumber(), p.getName(), p.getClueCharacter().name);
         }
 
         System.out.print("First player to start is..\nRoll dice..\n");
         int start = order.get(new Random().nextInt(order.size()));  //Random number
         Player player = allCharacters.get(start).player;
-        System.out.printf("~~Player %d (%s): %s~~\n", player.playerNumber, player.name, player.clueCharacter.name);
+        System.out.printf("~~Player %d (%s): %s~~\n", player.getPlayerNumber(), player.getName(), player.getClueCharacter().name);
 
         //Sorts out the character order
         while (playingCharacters.peek().getOrder() != start) {
@@ -189,7 +192,41 @@ public class Clue {
             if (count >= players.size()) count = 0;
         }
     }
-
+    
+    /**
+     * **INCOMPLETE**
+     * Moves player in specified direction on the board
+     * 
+     *  @author Brannon Haines
+     */
+    public static void movePlayer(String direction) {
+	ClueCharacter character = currentTurn.getClueCharacter();
+    	Pair<Integer, Integer> location = character.getLocation();
+    	int row = location.getOne();
+   	int col = location.getTwo();
+    	if (direction.equals("Up")) {
+    		board[row-1][col] = character;
+    		board[row][col] = null;
+    		character.setLocation(new Pair<Integer, Integer>(row-1, col));
+    	}
+    	else if (direction.equals("Down")) {
+    		board[row+1][col] = character;
+    		board[row][col] = null;
+    		character.setLocation(new Pair<Integer, Integer>(row+1, col));
+    	}
+    	else if (direction.equals("Left")) {
+    		board[row][col-1] = character;
+    		board[row][col] = null;
+    		character.setLocation(new Pair<Integer, Integer>(row, col-1));
+    	}
+    	else if (direction.equals("Right")) {
+    		board[row][col+1] = character;
+    		board[row][col] = null;
+    		character.setLocation(new Pair<Integer, Integer>(row, col+1));
+    	}
+    	
+    }
+    
 
     /**
      * Loads room name and dimensions into map
@@ -240,11 +277,11 @@ public class Clue {
 
         characters.add(new ClueCharacter("Mrs White", 2));
         characterOrder.offer(characters.get(characters.size() - 1));
-        charLocations.put(characters.get(characters.size() - 1), new Pair<Integer, Integer>(0, 10));
+        charLocations.put(characters.get(characters.size() - 1), new Pair<Integer, Integer>(0, 8));
 
         characters.add(new ClueCharacter("Mr Green", 3));
         characterOrder.offer(characters.get(characters.size() - 1));
-        charLocations.put(characters.get(characters.size() - 1), new Pair<Integer, Integer>(0, 15));
+        charLocations.put(characters.get(characters.size() - 1), new Pair<Integer, Integer>(0, 17));
 
         characters.add(new ClueCharacter("Mrs Peacock", 4));
         characterOrder.offer(characters.get(characters.size() - 1));
@@ -266,14 +303,22 @@ public class Clue {
         weapons.add(new Weapon("Rope"));
         weapons.add(new Weapon("Spanner"));
     }
-
+    
+    /**
+     * Places room and character cards on the board, also sets entrances to rooms
+     * 
+     * @author Brannon Haines
+     */
     public static void placeCards() {
         placeRooms();
+        placeCharacters();
         setEntrances();
     }
 
     /**
      * Places room on the board
+     * 
+     * @author Brannon Haines
      */
     public static void placeRooms() {
         Iterator iterator = roomLocations.entrySet().iterator();
@@ -288,7 +333,7 @@ public class Clue {
             if (room.name.equals("Middle Room")) {  // Middle room can't be accessed
                 for (int i = 0; i < height; i++) {
                     for (int j = 0; j < width; j++) {
-                        board[nextRow][nextCol] = new Impassable(true);
+                        board[nextRow][nextCol] = new Impassable(false);
                         nextCol++;
                     }
                     nextRow++;
@@ -310,19 +355,26 @@ public class Clue {
     /**
      * Places character on board
      *
-     * @param charName, name of character
-     * @param location, starting location of character
+     *@author Brannon Haines
      */
-    public static void placeCharacters(String charName, Pair<Integer, Integer> location) {
-        int row = location.getOne();
-        int col = location.getTwo();
-        ClueCharacter character = new ClueCharacter(charName);
-        board[row][col] = character;
-        characters.add(character);
+    public static void placeCharacters() {
+        for (Player player : players) {
+        	ClueCharacter character = player.getClueCharacter();
+        	for (Map.Entry<ClueCharacter, Pair<Integer, Integer>> entry : charLocations.entrySet()) {
+        		if (character.name.equals(entry.getKey().name)) {
+        			int row = entry.getValue().getOne();
+        			int col = entry.getValue().getTwo();
+        			board[row][col] = character;
+        			character.setLocation(entry.getValue());
+        		}
+        	}
+        }
     }
 
     /**
      * Loads the entrances to each room on the board
+     * 
+     * @author Brannon Haines
      */
     public static void loadEntrances() {
         entranceLocations.add(new Pair<Integer, Integer>(6, 5));
@@ -346,12 +398,14 @@ public class Clue {
 
     /**
      * Sets the entrance as active on the board, creates a room as well
+     * 
+     * @author Brannon Haines
      */
     public static void setEntrances() {
         for (Pair<Integer, Integer> location : entranceLocations) {
             int row = location.getOne();
             int col = location.getTwo();
-            board[row][col] = new Impassable(false);
+            board[row][col] = new Impassable(true);
         }
 
     }
@@ -373,8 +427,14 @@ public class Clue {
         }
 
     }
-
-    public static String printBoard() {
+    
+    /**
+     * Prints the current state of the board
+     * 
+     * @author Brannon Haines
+     */
+    public static void printBoard() {
+    	clearScreen();
         String output = "";
         for (int row = 0; row < 24; row++) {
             output += "|";
@@ -388,7 +448,18 @@ public class Clue {
             }
             output += "\n";
         }
-        return output;
+        System.out.println(output);
+    }
+    
+    /**
+     * Clears the console screen by printing 20 empty lines
+     * 
+     * @author Brannon Haines
+     */
+    public static void clearScreen() {
+    	for (int i = 0; i < 20; i++) {
+    		System.out.println();
+    	}
     }
 
     /**
@@ -451,7 +522,7 @@ public class Clue {
                 ArrayList<Card> matchingCards = new ArrayList<>();
 
                 for (Card c : p.hand) {
-                    if (c == s.character || c == s.room || c == s.weapon) {
+                    if (c == s.getCharacter() || c == s.getRoom() || c == s.getWeapon()) {
                         matchingCards.add(c);
                     }
                 }
@@ -478,7 +549,7 @@ public class Clue {
         // Now relay the refute cards
         for(Player p : playOrder) {
             if (p.refuteCard != null) {
-                System.out.printf("%s has refuted with card \"%s\"\n", p.name, p.refuteCard);
+                System.out.printf("%s has refuted with card \"%s\"\n", p.getName(), p.refuteCard);
             }
 
             p.refuteCard = null;
@@ -506,8 +577,40 @@ public class Clue {
 
     public void getPlayerToScreen(Player p) {
         System.out.println("\n\n\n\n");
-        System.out.println("Player " + p.name + "'s turn.\n (Click to continue)");
+        System.out.println("Player " + p.getName() + "'s turn.\n (Click to continue)");
 
         INPUT.next();
     }
+
+	@Override
+	/**
+	 * Checks which key was pressed for movement
+	 * 
+	 * @author Brannon Haines
+	 */
+	public void keyPressed(KeyEvent keyEvent) {
+		int key = keyEvent.getKeyCode();
+		if (key == keyEvent.VK_UP){
+			movePlayer("Up");
+		}
+		else if (key == keyEvent.VK_DOWN) {
+			movePlayer("Down");
+		}
+		else if (key == keyEvent.VK_LEFT) {
+			movePlayer("Left");
+		}
+		else if (key == keyEvent.VK_RIGHT) {
+			movePlayer("Right");
+		}
+		
+	}
+
+	@Override
+	public void keyReleased(KeyEvent key) {
+	}
+
+	@Override
+	public void keyTyped(KeyEvent key) {
+	}
 }
+
