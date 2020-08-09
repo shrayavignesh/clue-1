@@ -28,7 +28,12 @@ public class Clue implements KeyListener{
     private static Queue<ClueCharacter> characterOrder = new ArrayDeque<>();
     private static Queue<Player> playOrder = new ArrayDeque<>();
     public static Player currentTurn;
-    public Suggestion gameSolution; // Final solution
+    public static Suggestion gameSolution; // Final solution
+
+    /**
+     * Rounds
+     */
+    private static boolean gameover = false;
 
     /**
      * TODO - Main Clue event loop
@@ -74,7 +79,7 @@ public class Clue implements KeyListener{
         // 2. Ask how many players (and their names?)
         getPlayerInfo();
 
-        Suggestion mainAccusation = new Suggestion(
+        gameSolution = new Suggestion(
                 weaponCards.remove(0),
                 characters.remove(0),
                 roomCards.remove(0)
@@ -91,7 +96,8 @@ public class Clue implements KeyListener{
         Collections.shuffle(deck);
         distributeCards(deck);
 
-        placeCards();
+        //placeCards();
+        round();
 
         INPUT.close();
     }
@@ -143,6 +149,8 @@ public class Clue implements KeyListener{
 
     /**
      * Queue ordering of players through sorting out the playing and unused characters
+     *
+     * @Author:Laurence_Malata
      */
     public static void setPlayOrder() {
         //Collections that separates playing and unused characters
@@ -182,12 +190,14 @@ public class Clue implements KeyListener{
 
     /**
      * Adds all remaining cards into one deck, shuffles and distributes to each player
+     *
+     * @Author:Laurence_Malata
      */
     public static void distributeCards(List<Card> cards) {
         System.out.print("Shuffling cards..\nDistributing cards to players\n");
         int count = 0;
-        for (int i = 0; i < cards.size(); i++) {
-            players.get(count).addCard(cards.get(i));
+        for (Card card : cards) {
+            players.get(count).addCard(card);
             count++;
             if (count >= players.size()) count = 0;
         }
@@ -504,82 +514,223 @@ public class Clue implements KeyListener{
     }
 
     /**
+     * Makes the Suggestion Script
+     * Author:Laurence_Malata
+     */
+    public static void makeSuggestion(){
+        System.out.print("Do you want to check your cards? Type 'Yes' to continue: ");
+        String input = INPUT.nextLine();
+        if(input.equals("Yes")) currentTurn.getHand();
+
+        int count = 0, index;
+
+        StringBuilder cards = new StringBuilder();
+        System.out.print("Which character are you suggesting?\n");
+        for (ClueCharacter c : allCharacters) cards.append(count++).append(" [").append(c.name).append("]   ");
+        System.out.print("Type the number: ");
+        index = INPUT.nextInt() - 1;
+        ClueCharacter suggestedCharacter = allCharacters.get(index);
+
+        cards = new StringBuilder();
+        count = 0;
+        System.out.print("What weapon was used?\n");
+        for (Weapon w : weapons) cards.append(count++).append(" [").append(w.name).append("]   ");
+        System.out.print("Type the number: ");
+        index = INPUT.nextInt() - 1;
+        Weapon suggestedWeapon = weapons.get(index);
+
+        Suggestion s = new Suggestion(suggestedWeapon,suggestedCharacter,currentTurn.getCurrentRoom());
+        refutation(currentTurn,s);
+    }
+
+    /**
      * This loops over the players apart from the one that instantiated the suggestion
      * @param player
-     * @param other
      * @param s
+     *
+     * @Author:Laurence_Malata
      */
-    public void makeSuggestion(Player player, Player other, Suggestion s) {
+    public static void refutation(Player player, Suggestion s) {
         //Move other player to suggested room
-        other.setCurrentRoom(s.getRoom());
+        if(s.getCharacter().getPlayer() != null) s.getCharacter().getPlayer().setCurrentRoom(s.getRoom());
+
 
         //Move weapon to suggested room
         s.getWeapon().setRoom(s.getRoom());
 
-
         for (Player p : playOrder) {
             if (!p.equals(player)) {
-                ArrayList<Card> matchingCards = new ArrayList<>();
-
-                for (Card c : p.hand) {
-                    if (c == s.getCharacter() || c == s.getRoom() || c == s.getWeapon()) {
-                        matchingCards.add(c);
+                while(s.getPlayerWithCard() == null){
+                    boolean hasSuggestedCard = s.checkHand(p.hand,p);
+                    if(hasSuggestedCard) {
+                        System.out.print("Player " + p.name + " has a card to refute to Player" + player.name +".\n");
+                        getPlayerToScreen(p);
+                        s.printCards();
+                        int refIndex = INPUT.nextInt();
+                        player.setRefuteCard(s.getPresentCards().get(refIndex-1));
+                    }
+                    else {
+                        System.out.print("Player " + p.name + " has no cards to refute.\n");
                     }
                 }
-
-                getPlayerToScreen(p);
-
-                if (!matchingCards.isEmpty()) {
-                    System.out.println("You can refute with the following cards: ");
-                    System.out.println("(0) - None");
-                    for (int i = 0; i < matchingCards.size(); i++) {
-                        System.out.printf("(%d) - %s\n", i+1, matchingCards.get(i));
-                    }
-
-                    System.out.println("\nChoose a card to refute with:");
-                    int refIndex = INPUT.nextInt();
-
-                    if (refIndex != 0) p.refuteCard = matchingCards.get(refIndex-1);
-                } else {
-                    System.out.println("You have no cards to refute with");
-                }
             }
-        }
-        
-        // Now relay the refute cards
-        for(Player p : playOrder) {
-            if (p.refuteCard != null) {
-                System.out.printf("%s has refuted with card \"%s\"\n", p.getName(), p.refuteCard);
-            }
-
-            p.refuteCard = null;
+            if(s.getPlayerWithCard() != null) break;
         }
 
-        //Player can choose to make an accusation
-        System.out.print("Enter 'Y' if you would like to make an accusation that " + s.getCharacter().toString()
-                + " commited a murder using " + s.getWeapon().toString() + " in " + s.getRoom().toString());
+        //Return back to current player
+        getPlayerToScreen(player);
+        System.out.print("Player " + s.getPlayerWithCard() + " has refuted card: "+player.getRefuteCard() +"\n");
+        player.setPreviousRoom(player.getCurrentRoom());
+        //After suggestion, current Player will be in this room until next turn
 
-        if (INPUT.nextLine().equals("Y")) {
-            //Make accusation
-            makeAccusation(s);
-        }
+        //Accusation
+        makeAccusation();
 
         //Game resumes
     }
+  
+    /**
+     *  Creates the Accusation Script
+     *
+     * @Author:Laurence_Malata
+     */
+    public static void makeAccusation(){
+        System.out.print("Would you like to make an accusation? You can only do this ONCE!\nType 'Yes'" +
+                "to continue or 'No' to resume the game: ");
 
-    //Players accusation is incorrect and they get kicked out of the game
+        if (INPUT.nextLine().equals("Yes")) {
+            System.out.print("Which character are you accusing?\n");
+            int count = 0,number;
+            StringBuilder cards = new StringBuilder();  //Prints the options
+            for (ClueCharacter c : allCharacters) cards.append(count++).append(" [").append(c.name).append("]   ");
+            System.out.print("Type the number: ");
+            number = INPUT.nextInt() - 1;
+            ClueCharacter accusedCharacter = allCharacters.get(number);
 
-    public void makeAccusation(Suggestion s) {
-        if (s == gameSolution) {
-            //PLAYER WINS
+            System.out.print("What weapon was used?\n");
+            cards = new StringBuilder();
+            count = 0;
+            for (Weapon w : weapons) cards.append(count++).append(" [").append(w.name).append("]   ");
+            System.out.print("Type the number: ");
+            number = INPUT.nextInt() - 1;
+            Weapon accusedWeapon = weapons.get(number);
+
+            System.out.print("Where did it happen?\n");
+            cards = new StringBuilder();
+            count = 0;
+            for (Room r : rooms) cards.append(count++).append(" [").append(r.name).append("]   ");
+            System.out.print("Type the number: ");
+            number = INPUT.nextInt() - 1;
+            Room accusedRoom = rooms.get(number);
+
+            //Make accusation
+            finalAccusation(currentTurn ,new Suggestion(accusedWeapon,accusedCharacter,accusedRoom));
         }
     }
 
+    /**
+     *  Players make a final accusation and if they win, the game is over. If their accusation is false, they are
+     *  kicked out of the game.
+     *
+     * @param p
+     * @param s
+     * @Author:Laurence_Malata
+     */
+    public static void finalAccusation(Player p, Suggestion s) {
+        System.out.print("Player " + p.getName() + " is going to make an accusation!\n");
+        System.out.print("Player " + p.getName() + " is accusing " + s.getCharacter() + " of murder using " +
+                s.getWeapon() + " in " + s.getRoom() +"\n");
+
+        //Wins the game
+        if(gameSolution.getCharacter().equals(s.getCharacter()) && gameSolution.getRoom().equals(s.getRoom()) &&
+        gameSolution.getWeapon().equals(s.getWeapon())){
+            gameover = true;
+            System.out.print("Player " + p.getName() + " has solved the murder mystery!\n");
+            System.out.print("Player " + p.getName() + " wins the game!\n");
+        }
+        //Loses the game, player's accusation is incorrect
+        else if (!gameSolution.getCharacter().equals(s.getCharacter()) || !gameSolution.getRoom().equals(s.getRoom()) ||
+                !gameSolution.getWeapon().equals(s.getWeapon())){
+            p.setPlayStatus(false);
+            System.out.print("Player " + p.getName() + " is out of the game!\n");
+        }
+    }
+
+    public static String getPlayerToScreen(Player p) {
+        System.out.println("\n\n\n\n");
+        System.out.println("Player " + p.name + "'s turn.\n (Press ENTER to continue)");
+
+        return INPUT.nextLine();
+    }
+
+    /**
+     * Method that questions the current Player if he/she wants to move rooms or not. This only applies
+     * if the current Player wasn't in the current Room during their turn, but during another player's
+     * turn (during Suggestion)
+     *
+     * @return 'Yes' or 'No' input
+     * @Author:Laurence_Malata
+     */
+    public static String optionToMove(){
+        String input = "";
+        if(currentTurn.getCurrentRoom() != null && currentTurn.getPreviousRoom() != null){
+            if(!currentTurn.getCurrentRoom().equals(currentTurn.getPreviousRoom())){
+                System.out.printf("You were previously in the %s...Do you wish to stay in the %d?\n Type and enter 'Yes' " +
+                        "to stay or 'No' to move: ", currentTurn.getPreviousRoom().name, currentTurn.getCurrentRoom().name);
+                input = INPUT.nextLine();
+                while(!input.equals("Yes") || !input.equals("No")){
+                    System.out.print("Wrong input. Please type either 'Yes' or 'No' and enter: ");
+                    input = INPUT.nextLine();
+                }
+            }
+        }
+        return input;
+    }
+
+    public static void round(){
+        Dice firstDice = new Dice();
+        Dice secondDice = new Dice();
+
+        //Loop until it reaches gameover
+        while(!gameover){
+            //Loop that checks for players that can't play anymore, to remove them at the front of queue
+            //And put them back to the queue
+            while(!playOrder.peek().canStillPlay()) {
+                currentTurn = playOrder.poll();
+                playOrder.offer(currentTurn);
+            }
+            currentTurn = playOrder.poll(); //Can still play so removed from front of queue to play current turn
+            getPlayerToScreen(currentTurn);
+            int first = firstDice.roll() + 1;
+            int second = secondDice.roll() + 1;
+            int total = first + second; //Total moves to use for move method
+            System.out.printf("Rolling dice..\nYou rolled a %d and a %d..\n" +
+                    "You can move %d squares", first,second,total);
+
+            //Was moved from previous room through suggestion
+            String input = optionToMove();
+
+            //Didn't move rooms
+            if(input.equals("Yes")){
+                makeSuggestion();
+            }
+            //Wants to move rooms or has to move boards
+            else if(input.equals("No") || input.equals("")) {
+                currentTurn.setCurrentRoom(null);   //Player moves out of room
+                //
+                //  Move turn
+                //
+                //Might need currentTurn.setCurrentRoom() <-- If player enters the room after moving
+            }
+        }
+    }
+  
     public void getPlayerToScreen(Player p) {
         System.out.println("\n\n\n\n");
         System.out.println("Player " + p.getName() + "'s turn.\n (Click to continue)");
 
-        INPUT.next();
+            playOrder.offer(currentTurn); //Player will be at the back of the playing order
+        }
     }
 
 	@Override
