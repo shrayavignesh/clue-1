@@ -32,4 +32,8 @@ public class ClueCharacter extends Card {
     String getDescription() {
         return "Hi. I am " + name + ".";
     }
+
+    public boolean playerNotNull() {
+        return player == null;
+    }
 }
