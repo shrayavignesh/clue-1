@@ -1,15 +1,11 @@
 public class ClueCharacter extends Card {
     protected Player player;
-    private Integer order;
+    private final Integer order;
     private Pair<Integer, Integer> location;
 
     public ClueCharacter(String name, Integer number) {
-        this.name = name;
+        super(name);
         order = number;
-    }
-
-    public ClueCharacter(String name) {
-        this.name = name;
     }
 
     public Integer getOrder() { return order; }
@@ -30,7 +26,7 @@ public class ClueCharacter extends Card {
 
     @Override
     String getDescription() {
-        return "Hi. I am " + name + ".";
+        return "Hi. I am " + super.getName() + ".";
     }
 
     public boolean playerNotNull() {
