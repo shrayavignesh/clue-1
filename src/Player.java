@@ -5,15 +5,14 @@ import java.util.List;
  * Represents a Player
  */
 public class Player {
-    private final ClueCharacter clueCharacter;
     protected final String name;
+    private final ClueCharacter clueCharacter;
     private final Integer playerNumber;
     protected List<Card> hand = new ArrayList<>();
+    protected Card refuteCard;
     private Room currentRoom = null;
     private Room previousRoom = null;
     private boolean canPlay = true;
-
-    protected Card refuteCard;
 
     public Player(String name, ClueCharacter character, Integer number) {
         clueCharacter = character;
@@ -23,6 +22,7 @@ public class Player {
 
     /**
      * Adds card to hand
+     *
      * @param card to be added
      */
     public void addCard(Card card) {
@@ -30,28 +30,52 @@ public class Player {
     }
 
     // Getters
-    public ClueCharacter getClueCharacter() { return clueCharacter; }
-    public String getHand() {
-        String cards = "Your cards:\n";
-        for(Card c : hand) cards += "[" + c.name + "] ";
-        return cards;
+    public ClueCharacter getClueCharacter() {
+        return clueCharacter;
     }
-    public Integer getPlayerNumber() {return playerNumber;}
-    public String getName() {return name;}
-    public Room getCurrentRoom() { return currentRoom; }
-    public Room getPreviousRoom() { return previousRoom; }
-    public boolean canStillPlay() { return canPlay; }
+
+    public List<Card> getHand() {
+        return hand;
+    }
+
+    public Integer getPlayerNumber() {
+        return playerNumber;
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public Room getCurrentRoom() {
+        return currentRoom;
+    }
 
     // Setters
-    public void setCurrentRoom(Room r) { currentRoom = r; }
-    public void setPreviousRoom(Room r){ previousRoom = r; }
-    public void setPlayStatus(boolean b) { canPlay = b; }
+    public void setCurrentRoom(Room r) {
+        currentRoom = r;
+    }
 
-    public void setRefuteCard(Card card) {
-        this.refuteCard = card;
+    public Room getPreviousRoom() {
+        return previousRoom;
+    }
+
+    public void setPreviousRoom(Room r) {
+        previousRoom = r;
+    }
+
+    public boolean canStillPlay() {
+        return canPlay;
+    }
+
+    public void setPlayStatus(boolean b) {
+        canPlay = b;
     }
 
     public Card getRefuteCard() {
         return this.refuteCard;
+    }
+
+    public void setRefuteCard(Card card) {
+        this.refuteCard = card;
     }
 }

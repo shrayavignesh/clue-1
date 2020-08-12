@@ -1,10 +1,10 @@
 import java.util.Random;
 
 public class Dice {
-    protected final static Random _rgen = new Random();
+    protected final static Random RANDOM = new Random();
 
     static int roll() {
-        return _rgen.nextInt(6) + 1;
+        return RANDOM.nextInt(6) + 1;
     }
 
 

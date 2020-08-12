@@ -1,3 +1,4 @@
+import java.util.ArrayList;
 import java.util.List;
 
 public class Suggestion {
@@ -5,10 +6,9 @@ public class Suggestion {
     private final Weapon weapon;
     private final ClueCharacter character;
     private final Room room;
-
+    private final List<Card> presentCards = new ArrayList<>();
     //Neighbouring Player
     private Player playerWithCard;
-    private List<Card> presentCards;
 
     public Suggestion(Weapon weapon, ClueCharacter character, Room room) {
         this.weapon = weapon;
@@ -18,12 +18,12 @@ public class Suggestion {
     }
 
     /**
-      * A boolean method that check if the neighbouring player has the suggested cards. If true, iteration
-      * going to the next players stop.
-      * During this method, if the player has a suggested card, the specific card will be added to the presentCards
-      * ArrayList.. this is to assume that the player has either 1 to 3 suggested cards in their hand
-      *
-      * @Author:Laurence_Malata
+     * A boolean method that check if the neighbouring player has the suggested cards. If true, iteration
+     * going to the next players stop.
+     * During this method, if the player has a suggested card, the specific card will be added to the presentCards
+     * ArrayList.. this is to assume that the player has either 1 to 3 suggested cards in their hand
+     *
+     * @author Laurence Malata
      */
     public boolean checkHand(List<Card> hand, Player nextPlayer) {
         boolean present = false;
@@ -38,22 +38,38 @@ public class Suggestion {
     }
 
     /**
-      * Returns the present suggested cards of the neighbouring player
-      *
-      * @Author:Laurence_Malata
+     * Returns the present suggested cards of the neighbouring player
+     *
+     * @author Laurence Malata
      */
     public Player getPlayerWithCard() {
         return playerWithCard;
     }
-    public String printCards(){
-        String cards = "Pick a card to refute: Type the number: \n";
+
+    public void printCards() {
+        StringBuilder cards = new StringBuilder("Pick a card to refute: Type the number: \n");
         int count = 0;
-        for(Card c : presentCards){ cards += count++ + " [" + c.name + "]   "; }
-        return cards;
+
+        for (Card c : presentCards) {
+            cards.append(count++).append(" [").append(c.getName()).append("]   ");
+        }
+
+        System.out.println(cards);
     }
 
-    public List<Card> getPresentCards() { return presentCards; }
-    public ClueCharacter getCharacter() {return character;}
-    public Room getRoom() {return room;}
-    public Weapon getWeapon() {return weapon;}
+    public List<Card> getPresentCards() {
+        return presentCards;
+    }
+
+    public ClueCharacter getCharacter() {
+        return character;
+    }
+
+    public Room getRoom() {
+        return room;
+    }
+
+    public Weapon getWeapon() {
+        return weapon;
+    }
 }
