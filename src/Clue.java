@@ -1,8 +1,10 @@
+import javax.swing.*;
 import java.util.*;
 
 public class Clue {
     private static final int MIN_PLAYERS = 2;
     private static final int MAX_PLAYERS = 6;
+    private static GUI ux;
     /**
      * Cards
      */
@@ -48,6 +50,8 @@ public class Clue {
      * That loop continues until all the players are gone or someone guesses correctly
      */
     public static void main(String[] a) {
+        ux = new GUI();
+
         // 0. Load up Arrays
         loadCharacters();
         loadWeapons();
@@ -100,14 +104,13 @@ public class Clue {
     public static void getPlayerInfo() {
         // Find out how many players
         int numPlayers = -1;
-        while (numPlayers < MIN_PLAYERS || numPlayers > MAX_PLAYERS) {
-            if (numPlayers != -1) {
-                System.out.printf("Game only supports %d-%d players.\n\n", MIN_PLAYERS, MAX_PLAYERS);
-            }
 
-            System.out.printf("How many players? (%d-%d): ", MIN_PLAYERS, MAX_PLAYERS);
-            numPlayers = INPUT.nextInt();
-        }
+        String[] choices = new String[(MAX_PLAYERS - MIN_PLAYERS) + 1];
+        for (int i = MIN_PLAYERS; i <= MAX_PLAYERS; i++) choices[i - 2] = String.valueOf(i);
+
+        numPlayers = Integer.parseInt(
+                (String) JOptionPane.showInputDialog(ux, "", "Choose how many players", JOptionPane.PLAIN_MESSAGE, null, choices, choices[0])
+        );
 
         // Get player names and assign them a character
         for (int i = 0; i < numPlayers; i++) {
@@ -434,6 +437,7 @@ public class Clue {
 
     /**
      * This loops over the players apart from the one that instantiated the suggestion
+     *
      * @param player
      * @param other
      * @param s
@@ -462,21 +466,21 @@ public class Clue {
                     System.out.println("You can refute with the following cards: ");
                     System.out.println("(0) - None");
                     for (int i = 0; i < matchingCards.size(); i++) {
-                        System.out.printf("(%d) - %s\n", i+1, matchingCards.get(i));
+                        System.out.printf("(%d) - %s\n", i + 1, matchingCards.get(i));
                     }
 
                     System.out.println("\nChoose a card to refute with:");
                     int refIndex = INPUT.nextInt();
 
-                    if (refIndex != 0) p.refuteCard = matchingCards.get(refIndex-1);
+                    if (refIndex != 0) p.refuteCard = matchingCards.get(refIndex - 1);
                 } else {
                     System.out.println("You have no cards to refute with");
                 }
             }
         }
-        
+
         // Now relay the refute cards
-        for(Player p : playOrder) {
+        for (Player p : playOrder) {
             if (p.refuteCard != null) {
                 System.out.printf("%s has refuted with card \"%s\"\n", p.name, p.refuteCard);
             }
