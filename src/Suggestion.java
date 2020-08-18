@@ -56,7 +56,15 @@ public class Suggestion {
         return presentCards;
     }
 
-    public ClueCharacter getCharacter() {return character;}
-    public Room getRoom() {return room;}
-    public Weapon getWeapon() {return weapon;}
+    public ClueCharacter getCharacter() {
+        return character;
+    }
+
+    public Room getRoom() {
+        return room;
+    }
+
+    public Weapon getWeapon() {
+        return weapon;
+    }
 }

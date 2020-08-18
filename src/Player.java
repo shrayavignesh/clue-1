@@ -1,5 +1,4 @@
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 
 /**
@@ -33,9 +32,9 @@ public class Player {
     // Getters
     public ClueCharacter getClueCharacter() { return clueCharacter; }
     public String getHand() {
-        String cards = "Your cards:\n";
-        for(Card c : hand) cards += "[" + c.name + "] ";
-        return cards;
+        StringBuilder cards = new StringBuilder("Your cards:\n");
+        for (Card c : hand) cards.append("[").append(c.name).append("] ");
+        return cards.toString();
     }
     public Integer getPlayerNumber() {return playerNumber;}
     public String getName() {return name;}

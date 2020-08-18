@@ -13,15 +13,13 @@ abstract class Card {
     }
 
     /**
-     * Returns a human-readable description of the Card
-     * @return
+     * @return a human-readable description of the Card
      */
     abstract String getDescription();
 
     /**
-     * Returns a char version of the card for use inside the map
      * TODO - Fix names with same first letter
-     * @return
+     * @return a char version of the card for use inside the map
      */
     char getCharRep() {
         return name.charAt(0);

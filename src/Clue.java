@@ -4,7 +4,6 @@ import java.util.*;
 public class Clue {
     private static final int MIN_PLAYERS = 2;
     private static final int MAX_PLAYERS = 6;
-    private static GUI ux;
     /**
      * Cards
      */
@@ -23,12 +22,13 @@ public class Clue {
     private static final ArrayList<Pair<Integer, Integer>> entranceLocations = new ArrayList<>();
     private static final Random randomize = new Random(); // For shuffling purposes
     private static final Scanner INPUT = new Scanner(System.in); // Input stream
+    private static final Queue<ClueCharacter> characterOrder = new ArrayDeque<>();
+    private static final Queue<Player> playOrder = new ArrayDeque<>();
     static Card[][] board = new Card[24][25];
+    private static GUI ux;
     private static ArrayList<ClueCharacter> allCharacters = new ArrayList<>();
-    private static Queue<ClueCharacter> characterOrder = new ArrayDeque<>();
-    private static Queue<Player> playOrder = new ArrayDeque<>();
+    private static Suggestion gameSolution;
     public Player currentTurn;
-    Suggestion gameSolution; // Final solution
 
     /**
      * TODO - Main Clue event loop
@@ -76,7 +76,7 @@ public class Clue {
         // 2. Ask how many players (and their names?)
         getPlayerInfo();
 
-        Suggestion mainAccusation = new Suggestion(
+        gameSolution = new Suggestion(
                 weaponCards.remove(0),
                 characters.remove(0),
                 roomCards.remove(0)
@@ -103,7 +103,7 @@ public class Clue {
      **/
     public static void getPlayerInfo() {
         // Find out how many players
-        int numPlayers = -1;
+        int numPlayers;
 
         String[] choices = new String[(MAX_PLAYERS - MIN_PLAYERS) + 1];
         for (int i = MIN_PLAYERS; i <= MAX_PLAYERS; i++) choices[i - 2] = String.valueOf(i);
@@ -115,7 +115,7 @@ public class Clue {
         // Get player names and assign them a character
         for (int i = 0; i < numPlayers; i++) {
             String playerName = "";
-            Integer number = null;
+            int number;
 
             while (playerName.equals("")) {
                 System.out.print("Enter name for Player " + (i + 1) + ": ");
@@ -158,7 +158,7 @@ public class Clue {
         }
 
         // Clear Screen 20 times
-        for (int i = 0; i < 20; i++) System.out.println("");
+        for (int i = 0; i < 20; i++) System.out.println();
 
         System.out.print("Characters playing are :\n");
         for (Player p : players) {
@@ -186,8 +186,8 @@ public class Clue {
     public static void distributeCards(List<Card> cards) {
         System.out.print("Shuffling cards..\nDistributing cards to players\n");
         int count = 0;
-        for (int i = 0; i < cards.size(); i++) {
-            players.get(count).addCard(cards.get(i));
+        for (Card card : cards) {
+            players.get(count).addCard(card);
             count++;
             if (count >= players.size()) count = 0;
         }
@@ -207,7 +207,7 @@ public class Clue {
         rooms.add(new Room("Conservatory", new Pair<>(0, 19)));
         roomLocations.put(rooms.get(rooms.size() - 1), new Pair<>(5, 6));
 
-        rooms.add(new Room("Billard Room", new Pair<>(8, 19)));
+        rooms.add(new Room("Billiard Room", new Pair<>(8, 19)));
         roomLocations.put(rooms.get(rooms.size() - 1), new Pair<>(5, 6));
 
         rooms.add(new Room("Library", new Pair<>(14, 19)));
@@ -235,27 +235,27 @@ public class Clue {
     public static void loadCharacters() {
         characters.add(new ClueCharacter("Miss Scarlett", 0));
         characterOrder.offer(characters.get(characters.size() - 1));
-        charLocations.put(characters.get(characters.size() - 1), new Pair<Integer, Integer>(24, 8));
+        charLocations.put(characters.get(characters.size() - 1), new Pair<>(24, 8));
 
         characters.add(new ClueCharacter("Col Mustard", 1));
         characterOrder.offer(characters.get(characters.size() - 1));
-        charLocations.put(characters.get(characters.size() - 1), new Pair<Integer, Integer>(17, 1));
+        charLocations.put(characters.get(characters.size() - 1), new Pair<>(17, 1));
 
         characters.add(new ClueCharacter("Mrs White", 2));
         characterOrder.offer(characters.get(characters.size() - 1));
-        charLocations.put(characters.get(characters.size() - 1), new Pair<Integer, Integer>(0, 10));
+        charLocations.put(characters.get(characters.size() - 1), new Pair<>(0, 10));
 
         characters.add(new ClueCharacter("Mr Green", 3));
         characterOrder.offer(characters.get(characters.size() - 1));
-        charLocations.put(characters.get(characters.size() - 1), new Pair<Integer, Integer>(0, 15));
+        charLocations.put(characters.get(characters.size() - 1), new Pair<>(0, 15));
 
         characters.add(new ClueCharacter("Mrs Peacock", 4));
         characterOrder.offer(characters.get(characters.size() - 1));
-        charLocations.put(characters.get(characters.size() - 1), new Pair<Integer, Integer>(6, 24));
+        charLocations.put(characters.get(characters.size() - 1), new Pair<>(6, 24));
 
         characters.add(new ClueCharacter("Prof Plum", 5));
         characterOrder.offer(characters.get(characters.size() - 1));
-        charLocations.put(characters.get(characters.size() - 1), new Pair<Integer, Integer>(19, 24));
+        charLocations.put(characters.get(characters.size() - 1), new Pair<>(19, 24));
     }
 
     /**
@@ -279,13 +279,12 @@ public class Clue {
      * Places room on the board
      */
     public static void placeRooms() {
-        Iterator iterator = roomLocations.entrySet().iterator();
-        while (iterator.hasNext()) {
-            Map.Entry<Room, Pair<Integer, Integer>> roomLocation = (Map.Entry) iterator.next();
-            Room room = (Room) roomLocation.getKey();
-            Pair<Integer, Integer> dimension = (Pair<Integer, Integer>) roomLocation.getValue();
-            int height = (int) dimension.getOne();
-            int width = (int) dimension.getTwo();
+        while (roomLocations.entrySet().iterator().hasNext()) {
+            var roomLocation = (Map.Entry<Room, Pair<Integer, Integer>>) roomLocations.entrySet().iterator().next();
+            Room room = roomLocation.getKey();
+            Pair<Integer, Integer> dimension = roomLocation.getValue();
+            int height = dimension.getOne();
+            int width = dimension.getTwo();
             int nextRow = room.TLSquare.getOne();  // starting row
             int nextCol = room.TLSquare.getTwo();  // starting column
             if (room.name.equals("Middle Room")) {  // Middle room can't be accessed
@@ -328,23 +327,23 @@ public class Clue {
      * Loads the entrances to each room on the board
      */
     public static void loadEntrances() {
-        entranceLocations.add(new Pair<Integer, Integer>(6, 5));
-        entranceLocations.add(new Pair<Integer, Integer>(12, 8));
-        entranceLocations.add(new Pair<Integer, Integer>(15, 7));
-        entranceLocations.add(new Pair<Integer, Integer>(19, 7));
-        entranceLocations.add(new Pair<Integer, Integer>(18, 12));
-        entranceLocations.add(new Pair<Integer, Integer>(18, 13));
-        entranceLocations.add(new Pair<Integer, Integer>(20, 15));
-        entranceLocations.add(new Pair<Integer, Integer>(21, 18));
-        entranceLocations.add(new Pair<Integer, Integer>(16, 19));
-        entranceLocations.add(new Pair<Integer, Integer>(14, 21));
-        entranceLocations.add(new Pair<Integer, Integer>(9, 19));
-        entranceLocations.add(new Pair<Integer, Integer>(12, 23));
-        entranceLocations.add(new Pair<Integer, Integer>(4, 19));
-        entranceLocations.add(new Pair<Integer, Integer>(5, 16));
-        entranceLocations.add(new Pair<Integer, Integer>(7, 15));
-        entranceLocations.add(new Pair<Integer, Integer>(7, 10));
-        entranceLocations.add(new Pair<Integer, Integer>(5, 9));
+        entranceLocations.add(new Pair<>(6, 5));
+        entranceLocations.add(new Pair<>(12, 8));
+        entranceLocations.add(new Pair<>(15, 7));
+        entranceLocations.add(new Pair<>(19, 7));
+        entranceLocations.add(new Pair<>(18, 12));
+        entranceLocations.add(new Pair<>(18, 13));
+        entranceLocations.add(new Pair<>(20, 15));
+        entranceLocations.add(new Pair<>(21, 18));
+        entranceLocations.add(new Pair<>(16, 19));
+        entranceLocations.add(new Pair<>(14, 21));
+        entranceLocations.add(new Pair<>(9, 19));
+        entranceLocations.add(new Pair<>(12, 23));
+        entranceLocations.add(new Pair<>(4, 19));
+        entranceLocations.add(new Pair<>(5, 16));
+        entranceLocations.add(new Pair<>(7, 15));
+        entranceLocations.add(new Pair<>(7, 10));
+        entranceLocations.add(new Pair<>(5, 9));
     }
 
     /**
@@ -354,44 +353,26 @@ public class Clue {
         for (Pair<Integer, Integer> location : entranceLocations) {
             int row = location.getOne();
             int col = location.getTwo();
-            board[row][col] = new Impassable(false);
-        }
-
-    }
-
-    /**
-     * Validity check upon users input
-     * If input is invalid, keeps asking for a valid input
-     *
-     * @param i, user input of number of players
-     */
-    static int validInputCheck(int i) {
-        while (true) {
-            if (i >= MIN_PLAYERS && i <= MAX_PLAYERS) {
-                return i;
-            } else {
-                System.out.println("Number of players must be between 2 and 6...");
-                return validInputCheck(Integer.parseInt(INPUT.nextLine()));
-            }
+            board[row][col] = new Impassable();
         }
 
     }
 
     public static String printBoard() {
-        String output = "";
+        StringBuilder output = new StringBuilder();
         for (int row = 0; row < 24; row++) {
-            output += "|";
+            output.append("|");
             for (int col = 0; col < 25; col++) {
                 Card cell = board[row][col];
                 if (cell != null) {
-                    output += cell.getCharRep() + "|";
+                    output.append(cell.getCharRep()).append("|");
                 } else {
-                    output += "_|";
+                    output.append("_|");
                 }
             }
-            output += "\n";
+            output.append("\n");
         }
-        return output;
+        return output.toString();
     }
 
     /**
@@ -418,9 +399,9 @@ public class Clue {
         ArrayList<Card> toDeal = new ArrayList<>();
 
         //add all cards but solution cards to new deck
-        for (Weapon w : weapons) toDeal.add(w);
-        for (ClueCharacter c : characters) toDeal.add(c);
-        for (Room r : rooms) toDeal.add(r);
+        toDeal.addAll(weapons);
+        toDeal.addAll(characters);
+        toDeal.addAll(rooms);
 
         //shuffle said deck
         Collections.shuffle(toDeal);
@@ -428,8 +409,8 @@ public class Clue {
         //deal between players
         while (!toDeal.isEmpty()) {
             for (Player p : players) {
-                p.addCard(toDeal.get(toDeal.size()));
-                toDeal.remove(toDeal.size());
+                p.addCard(toDeal.get(toDeal.size() -1));
+                toDeal.remove(toDeal.size() -1);
             }
         }
 
@@ -438,9 +419,9 @@ public class Clue {
     /**
      * This loops over the players apart from the one that instantiated the suggestion
      *
-     * @param player
-     * @param other
-     * @param s
+     * @param player player making suggestion
+     * @param other player involved in suggestion
+     * @param s suggestion envelope
      */
     public void makeSuggestion(Player player, Player other, Suggestion s) {
         //Move other player to suggested room
@@ -490,7 +471,7 @@ public class Clue {
 
         //Player can choose to make an accusation
         System.out.print("Enter 'Y' if you would like to make an accusation that " + s.getCharacter().toString()
-                + " commited a murder using " + s.getWeapon().toString() + " in " + s.getRoom().toString());
+                + " committed a murder using " + s.getWeapon().toString() + " in " + s.getRoom().toString());
 
         if (INPUT.nextLine().equals("Y")) {
             //Make accusation
