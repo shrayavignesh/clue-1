@@ -21,7 +21,6 @@ public class Clue {
     private static final Map<ClueCharacter, Pair<Integer, Integer>> charLocations = new HashMap<>();
     private static final ArrayList<Pair<Integer, Integer>> entranceLocations = new ArrayList<>();
     private static final Random randomize = new Random(); // For shuffling purposes
-    private static final Scanner INPUT = new Scanner(System.in); // Input stream
     private static final Queue<ClueCharacter> characterOrder = new ArrayDeque<>();
     private static final Queue<Player> playOrder = new ArrayDeque<>();
     static Card[][] board = new Card[24][25];
@@ -94,8 +93,6 @@ public class Clue {
         distributeCards(deck);
 
         placeCards();
-
-        INPUT.close();
     }
 
     /**
@@ -109,7 +106,14 @@ public class Clue {
         for (int i = MIN_PLAYERS; i <= MAX_PLAYERS; i++) choices[i - 2] = String.valueOf(i);
 
         numPlayers = Integer.parseInt(
-                (String) JOptionPane.showInputDialog(ux, "", "Choose how many players", JOptionPane.PLAIN_MESSAGE, null, choices, choices[0])
+                (String) JOptionPane.showInputDialog(ux,
+                        "",
+                        "Choose how many players",
+                        JOptionPane.PLAIN_MESSAGE,
+                        null,
+                        choices,
+                        choices[0]
+                )
         );
 
         ArrayList<ClueCharacter> selectablePlayers = new ArrayList<>();
@@ -124,7 +128,16 @@ public class Clue {
                 playerName = JOptionPane.showInputDialog("Enter name for player " + (i + 1) + ":");
             }
 
-            chosenCharacter = (ClueCharacter) JOptionPane.showInputDialog(ux, "Available:", "Choose a Character", 0, null, selectablePlayers.toArray(), selectablePlayers.toArray()[0]);
+            chosenCharacter =
+                    (ClueCharacter) JOptionPane.showInputDialog(
+                            ux,
+                            "Available:",
+                            "Choose a Character",
+                            0,
+                            null,
+                            selectablePlayers.toArray(),
+                            selectablePlayers.toArray()[0]
+                    );
 
             selectablePlayers.remove(chosenCharacter);
             players.add(new Player(playerName, chosenCharacter, (i + 1)));
@@ -265,6 +278,7 @@ public class Clue {
     public static void placeCards() {
         placeRooms();
         setEntrances();
+        placeCharacters();
     }
 
     /**
@@ -303,16 +317,14 @@ public class Clue {
 
     /**
      * Places character on board
-     *
-     * @param charName, name of character
-     * @param location, starting location of character
      */
-    public static void placeCharacters(String charName, Pair<Integer, Integer> location) {
-        int row = location.getOne();
-        int col = location.getTwo();
-        ClueCharacter character = new ClueCharacter(charName, 0);
-        board[row][col] = character;
-        characters.add(character);
+    public static void placeCharacters() {
+        for (ClueCharacter c : allCharacters) {
+            int x = c.getLocation().getOne();
+            int y = c.getLocation().getTwo();
+
+            board[x][y] = c;
+        }
     }
 
     /**
@@ -443,7 +455,7 @@ public class Clue {
                     }
 
                     System.out.println("\nChoose a card to refute with:");
-                    int refIndex = INPUT.nextInt();
+                    int refIndex = 0;
 
                     if (refIndex != 0) p.refuteCard = matchingCards.get(refIndex - 1);
                 } else {
@@ -465,7 +477,7 @@ public class Clue {
         System.out.print("Enter 'Y' if you would like to make an accusation that " + s.getCharacter().toString()
                 + " committed a murder using " + s.getWeapon().toString() + " in " + s.getRoom().toString());
 
-        if (INPUT.nextLine().equals("Y")) {
+        if (true) {
             //Make accusation
             makeAccusation(s);
         }
@@ -484,7 +496,5 @@ public class Clue {
     public void getPlayerToScreen(Player p) {
         System.out.println("\n\n\n\n");
         System.out.println("Player " + p.name + "'s turn.\n (Click to continue)");
-
-        INPUT.next();
     }
 }
