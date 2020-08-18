@@ -318,7 +318,7 @@ public class Clue {
     public static void placeCharacters(String charName, Pair<Integer, Integer> location) {
         int row = location.getOne();
         int col = location.getTwo();
-        ClueCharacter character = new ClueCharacter(charName);
+        ClueCharacter character = new ClueCharacter(charName, 0);
         board[row][col] = character;
         characters.add(character);
     }

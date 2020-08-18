@@ -3,7 +3,7 @@ public class ClueCharacter extends Card {
     private final Integer order;
     private Pair<Integer, Integer> location;
 
-    public ClueCharacter(String name, Integer number) {
+    public ClueCharacter(String name, int number) {
         super(name);
         order = number;
     }

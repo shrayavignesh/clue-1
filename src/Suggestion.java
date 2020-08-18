@@ -3,9 +3,9 @@ import java.util.List;
 
 public class Suggestion {
     // Current Player
-    private final Weapon weapon;
-    private final ClueCharacter character;
-    private final Room room;
+    protected final Weapon weapon;
+    protected final ClueCharacter character;
+    protected final Room room;
     private final List<Card> presentCards = new ArrayList<>();
     //Neighbouring Player
     private Player playerWithCard;

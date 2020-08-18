@@ -4,11 +4,18 @@
 abstract class Card {
     protected String name;
 
+    public Card(String name) {
+        this.name = name;
+    }
+
+    protected Card() {
+    }
+
     /**
      * Name of card entity
      * @return String name
      */
-    private String getName() {
+    public String getName() {
         return name;
     }
 
