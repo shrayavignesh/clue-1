@@ -32,4 +32,9 @@ public class ClueCharacter extends Card {
     public boolean playerNotNull() {
         return player == null;
     }
+
+    @Override
+    public String toString() {
+        return name;
+    }
 }

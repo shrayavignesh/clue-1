@@ -112,31 +112,23 @@ public class Clue {
                 (String) JOptionPane.showInputDialog(ux, "", "Choose how many players", JOptionPane.PLAIN_MESSAGE, null, choices, choices[0])
         );
 
+        ArrayList<ClueCharacter> selectablePlayers = new ArrayList<>();
+        selectablePlayers.addAll(characters);
+
         // Get player names and assign them a character
         for (int i = 0; i < numPlayers; i++) {
             String playerName = "";
-            int number;
+            ClueCharacter chosenCharacter;
 
             while (playerName.equals("")) {
-                System.out.print("Enter name for Player " + (i + 1) + ": ");
-                playerName = INPUT.nextLine();
-            }
-            System.out.print("Which character do you want to play? Enter the number:\n");
-            for (int j = 0; j < characters.size(); j++) {
-                if (characters.get(j).getPlayer() == null) {
-                    System.out.print("(" + (j + 1) + ") : " + characters.get(j).name + " ");
-                }
-                if (j == characters.size() - 1) System.out.print("\nNumber: ");
-            }
-            number = INPUT.nextInt() - 1;
-            while (characters.get(number).getPlayer() != null) {
-                System.out.print("Character not available, pick another number: ");
-                number = INPUT.nextInt() - 1;
+                playerName = JOptionPane.showInputDialog("Enter name for player " + (i + 1) + ":");
             }
 
-            players.add(new Player(playerName, characters.get(number), (i + 1)));
-            characters.get(number).addPlayer(players.get(players.size() - 1));
-            System.out.printf("Player %d (%s) is %s\n\n", (i + 1), playerName, characters.get(number).name);
+            chosenCharacter = (ClueCharacter) JOptionPane.showInputDialog(ux, "Available:", "Choose a Character", 0, null, selectablePlayers.toArray(), selectablePlayers.toArray()[0]);
+
+            selectablePlayers.remove(chosenCharacter);
+            players.add(new Player(playerName, chosenCharacter, (i + 1)));
+            chosenCharacter.addPlayer(players.get(players.size() - 1));
         }
     }
 
@@ -409,8 +401,8 @@ public class Clue {
         //deal between players
         while (!toDeal.isEmpty()) {
             for (Player p : players) {
-                p.addCard(toDeal.get(toDeal.size() -1));
-                toDeal.remove(toDeal.size() -1);
+                p.addCard(toDeal.get(toDeal.size() - 1));
+                toDeal.remove(toDeal.size() - 1);
             }
         }
 
@@ -420,8 +412,8 @@ public class Clue {
      * This loops over the players apart from the one that instantiated the suggestion
      *
      * @param player player making suggestion
-     * @param other player involved in suggestion
-     * @param s suggestion envelope
+     * @param other  player involved in suggestion
+     * @param s      suggestion envelope
      */
     public void makeSuggestion(Player player, Player other, Suggestion s) {
         //Move other player to suggested room
