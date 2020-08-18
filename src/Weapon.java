@@ -2,7 +2,7 @@ public class Weapon extends Card {
     public Room room;
 
     public Weapon(String name) {
-        this.name = name;
+        super(name);
     }
 
     public void setRoom(Room r) {
@@ -10,7 +10,7 @@ public class Weapon extends Card {
     }
 
     @Override
-    String getDescription() {
-        return "A " + name;
+    public String getDescription() {
+        return "A " + getName();
     }
 }
