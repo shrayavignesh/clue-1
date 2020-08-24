@@ -16,7 +16,12 @@ public class Impassable extends Card {
     // TODO - Maybe find a better way to handle this
     @Override
     String getDescription() {
-        return null;
+        return "Impassable";
+    }
+
+    @Override
+    String type() {
+        return "Impassable";
     }
 
     @Override

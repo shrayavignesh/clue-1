@@ -24,6 +24,7 @@ public class Clue {
     private static final Queue<ClueCharacter> characterOrder = new ArrayDeque<>();
     private static final Queue<Player> playOrder = new ArrayDeque<>();
     static Card[][] board = new Card[24][25];
+    public Board gameBoard;
     private static GUI ux;
     private static ArrayList<ClueCharacter> allCharacters = new ArrayList<>();
     private static Suggestion gameSolution;
@@ -313,6 +314,9 @@ public class Clue {
                 }
             }
         }
+
+       //Make board object, add rooms
+       Board b = new Board (board);
     }
 
     /**

@@ -3,6 +3,7 @@
  */
 abstract class Card {
     protected String name;
+    protected  String type;
 
     public Card(String name) {
         this.name = name;
@@ -23,6 +24,8 @@ abstract class Card {
      * @return a human-readable description of the Card
      */
     abstract String getDescription();
+
+    abstract String type();
 
     /**
      * TODO - Fix names with same first letter

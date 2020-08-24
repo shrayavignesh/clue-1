@@ -38,6 +38,7 @@ public class Room extends Card {
         this.otherWeapon = otherWeapon;
     }
 
+
     @Override
     public String getDescription() {
         if (weapon == null) {
@@ -45,5 +46,10 @@ public class Room extends Card {
         } else {
             return "You've entered the " + name + " room, you see a " + weapon.getDescription() + ".\n";
         }
+    }
+
+    @Override
+    String type() {
+        return "Room";
     }
 }
